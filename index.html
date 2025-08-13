@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hive AI — Coming Soon (Join the Waitlist)</title>
+  <meta name="description" content="Hive AI orchestrates hives of collaborating agents. Coming soon — join the waitlist to get early access and updates." />
+  <meta property="og:title" content="Hive AI — Coming Soon" />
+  <meta property="og:description" content="Hives of collaborating agents that plan, build and ship for you. Join the waitlist." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/og-image.png" />
+  <meta name="theme-color" content="#121212">
+
+  <!-- Inter & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { color-scheme: dark; --stage-h: 260px; }
+    html, body { height: 100%; margin: 0; }
+    body{
+      background: #121212;
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: #c9d2df;
+    }
+
+    /* ====== Shell / layout ====== */
+    .shell{ width: min(1200px, 92vw); margin: 0 auto; }
+
+    /* ====== Header ====== */
+    header{
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      background: transparent;
+      border-bottom: none;
+      transition: background 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    
+    /* Header with gradient background when scrolled */
+    header.scrolled {
+      background: linear-gradient(to bottom, rgba(18, 18, 18, 0.2) 0%, rgba(18, 18, 18, 0.1) 60%, rgba(18, 18, 18, 0) 100%);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding: 14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; color:#eaf0fb; text-decoration:none; font-weight:700; letter-spacing:.2px; }
+    .nav, .brand, .links a, .cta{ appearance:none; background: transparent; color:#e8eef9; border:none; border-radius:999px; padding:10px 14px; font-weight:800; letter-spacing:.3px; cursor:pointer; box-shadow:none; font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+    .links{ display:flex; gap:24px; align-items:center; }
+    .links a{ color:#a9b8cb; text-decoration:none; font-weight:600; font-size:14px; letter-spacing:.2px; }
+    .links a:hover{ color:#e8eef9; }
+    .cta{ appearance:none; background: transparent; color:#e8eef9;
+      border:1px solid rgba(255,255,255,0.20); border-radius:999px; padding:10px 14px; font-weight:800; letter-spacing:.3px; cursor:pointer; box-shadow:none; }
+
+    /* ====== Hero ====== */
+    .hero{
+      padding: 92px 0 24px; /* extra top to account for fixed header overlay */
+      min-height: 100vh; /* fill initial page */
+      background-image: url('hivelanding.png');
+      background-position: center bottom;
+      background-size: cover;
+      background-repeat: no-repeat;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+    .hero-wrap{ display: flex; align-items: center; justify-content: center; }
+    
+    /* ====== Hexagon Animation Overlay ====== */
+    .hex-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .hex-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .hex-stage svg {
+      /* Make the hexagon much larger */
+      width: min(90vw, 1800px);
+      height: auto;
+      overflow: visible;
+      shape-rendering: geometricPrecision;
+      text-rendering: optimizeLegibility;
+      opacity: 0.75; /* 25% less visible */
+      transform: translateX(25%) translateY(-10%); /* Move 25% to the right and 10% up */
+    }
+    
+    /* Hexagon animation styles */
+    .hex {
+      fill: none;
+      stroke: rgba(52, 76, 95, 0.8);
+      stroke-width: 0.8;
+      vector-effect: non-scaling-stroke;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      filter: url(#glow);
+      pointer-events: none;
+    }
+    
+    .dot {
+      fill: var(--dot-color, rgba(52, 76, 95, 1));
+      filter: none;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: 50% 50%;
+      transform: scale(.7);
+      pointer-events: none;
+    }
+    
+    .dot.interactive {
+      pointer-events: auto;
+      cursor: pointer;
+      will-change: transform, filter, opacity;
+      transition: transform 160ms cubic-bezier(.2,.6,.2,1) !important, opacity 140ms ease !important, filter 160ms ease !important;
+      stroke: rgba(255,255,255,0);
+      stroke-width: 16;
+      pointer-events: all;
+      touch-action: none;
+    }
+    
+    .dot.interactive:nth-child(1) { animation: throb1 6s ease-in-out infinite !important; }
+    .dot.interactive:nth-child(2) { animation: throb2 6s ease-in-out infinite !important; }
+    .dot.interactive:nth-child(3) { animation: throb3 6s ease-in-out infinite !important; }
+    .dot.interactive:nth-child(4) { animation: throb4 6s ease-in-out infinite !important; }
+    .dot.interactive:nth-child(5) { animation: throb5 6s ease-in-out infinite !important; }
+    .dot.interactive:nth-child(6) { animation: throb6 6s ease-in-out infinite !important; }
+    
+    @keyframes throb1 {
+      0%, 16.67%, 100% { filter: none !important; transform: scale(1) !important; }
+      8.33% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    @keyframes throb2 {
+      16.67%, 33.33%, 100% { filter: none !important; transform: scale(1) !important; }
+      25% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    @keyframes throb3 {
+      33.33%, 50%, 100% { filter: none !important; transform: scale(1) !important; }
+      41.67% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    @keyframes throb4 {
+      50%, 66.67%, 100% { filter: none !important; transform: scale(1) !important; }
+      58.33% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    @keyframes throb5 {
+      66.67%, 83.33%, 100% { filter: none !important; transform: scale(1) !important; }
+      75% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    @keyframes throb6 {
+      83.33%, 100% { filter: none !important; transform: scale(1) !important; }
+      91.67% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
+    }
+    
+    .dot.interactive:hover, .dot.interactive:focus-visible {
+      transform: scale(10);
+      opacity: 1;
+      filter: url(#dotGlowUltra);
+    }
+    
+    .dot.interactive:active {
+      transform: scale(9.4);
+    }
+    
+    .ring {
+      fill: none;
+      stroke: rgba(255,255,255,0.85);
+      stroke-width: 0.8;
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .edge {
+      stroke: rgba(52, 76, 95, 0.8);
+      stroke-width: 0.6;
+      opacity: 0;
+      vector-effect: non-scaling-stroke;
+      stroke-linecap: round;
+    }
+    
+    /* Reduced motion for hexagon animation */
+    @media (prefers-reduced-motion: reduce) {
+      .hex, .dot, .edge, .ring {
+        transition: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
+    .hero-left{ text-align: left; }
+    .eyebrow{ color:#ffc97b; font-weight:700; letter-spacing:.25em; font-size:12px; text-transform:uppercase; }
+    .h1{ margin: 14px 0 12px; font-weight:800; letter-spacing:-.02em; font-size: clamp(32px, 7vw, 64px); color:#eef3ff; max-width: 22ch; }
+    .sub{ margin: 10px 0 20px; color:#9fb2c7; font-size: clamp(14px, 2.4vw, 18px); line-height:1.6; max-width: 68ch; }
+    .hero-actions{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+    .badge{ display:inline-flex; align-items:center; gap:8px; font-weight:800; color:#0b0d10; background: linear-gradient(90deg,#ffd479,#ff8f8f); border-radius:999px; padding:8px 12px; letter-spacing:.3px; box-shadow: 0 6px 30px rgba(255,164,97,.25); }
+
+    /* removed hero-right media box */
+
+    /* ====== Waitlist form ====== */
+    .waitlist{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .input{ flex: 1 1 280px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16); color:#e8eef9; border-radius: 12px; padding: 12px 14px; font-size: 14.5px; outline: none; }
+    .input::placeholder{ color:#9fb2c7; }
+    .primary{ appearance:none; background: transparent; color:#e8eef9; border:1px solid rgba(255,255,255,0.20); border-radius:999px; padding:12px 18px; font-weight:800; letter-spacing:.3px; cursor:pointer; box-shadow:none; font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+    .secondary{ appearance:none; background: transparent; color:#e8eef9; border:1px solid rgba(255,255,255,0.20); border-radius:999px; padding:12px 16px; font-weight:800; letter-spacing:.3px; cursor:pointer; box-shadow:none; font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+    .form-note{ font-size:12.5px; color:#8ea0b7; margin-left: 4px; }
+    .status{ font-size: 14px; margin-top: 8px; min-height: 1.2em; }
+    .status[data-ok="1"]{ color:#9be7a5; }
+    .status[data-ok="0"]{ color:#ff9b9b; }
+
+    .cta:hover, .primary:hover, .secondary:hover, .cta-discord:hover{ background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+
+    /* ====== Discord strip ====== */
+    .discord{
+      margin-top: 8px;
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center;
+      background: linear-gradient(90deg, rgba(88,101,242,.12), rgba(88,101,242,.04));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 14px 16px;
+    }
+    .cta-discord{ display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; letter-spacing:.3px; background: transparent; color:#e8eef9; border:1px solid rgba(255,255,255,0.20); border-radius: 999px; padding: 10px 14px; box-shadow: none; font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; text-transform: uppercase; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
+
+    /* Footer */
+    footer{ border-top: 1px solid rgba(255,255,255,0.06); padding: 28px 0 44px; color:#7d8ea4; font-size: 13px; }
+
+    /* Accessibility / focus */
+    .ghost:focus-visible, .cta:focus-visible, .primary:focus-visible, .secondary:focus-visible, .input:focus-visible, .panel:focus-visible, a:focus-visible{
+      outline: 3px solid rgba(168, 200, 255, .9);
+      outline-offset: 2px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .cta, .primary, .secondary { transition: none !important; }
+    }
+
+    @media (max-width: 980px){
+      .hero{ padding-top: 44px; }
+      .hero-wrap{ grid-template-columns: 1fr; gap: 24px; }
+      .hex-overlay{ display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== Header ====== -->
+  <header>
+    <div class="shell nav">
+      <a class="brand" href="#">Hive AI</a>
+      <nav class="links">
+        <a href="#product">Product</a>
+        <a href="#api">API</a>
+        <a href="#docs">Docs</a>
+        <a class="cta" href="#signup">Join Waitlist</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ====== Hero ====== -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell hero-wrap">
+      </div>
+      
+      <!-- Hexagon Animation Overlay -->
+      <div class="hex-overlay">
+        <div class="hex-stage">
+          <svg viewBox="0 0 1200 840" role="img" aria-label="Side-joined hex cluster with radial fade">
+            <defs>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="b" />
+                <feMerge>
+                  <feMergeNode in="b"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+
+              <!-- slightly stronger glow for points -->
+              <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="b" />
+                <feMerge>
+                  <feMergeNode in="b"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+
+              <!-- ultra hover glow for points (for 10x scale without clipping) -->
+              <filter id="dotGlowUltra" x="-140%" y="-140%" width="380%" height="380%">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="b1" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b2" />
+                <feMerge>
+                  <feMergeNode in="b1"/>
+                  <feMergeNode in="b2"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+
+              <!-- Invisible radial mask (elliptical) for distance fade -->
+              <radialGradient id="fadeGradient" gradientUnits="userSpaceOnUse" cx="600" cy="420" r="440" gradientTransform="translate(600 420) scale(1 0.7) translate(-600 -420)">
+                <stop offset="0%"  stop-color="#fff" stop-opacity="1"/>
+                <stop offset="35%" stop-color="#fff" stop-opacity="1"/>
+                <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+              </radialGradient>
+              <mask id="fadeMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="840">
+                <rect x="0" y="0" width="1200" height="840" fill="url(#fadeGradient)"/>
+              </mask>
+            </defs>
+
+            <!-- Apply the radial fade to the whole cluster -->
+            <g id="cluster" mask="url(#fadeMask)"></g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== Components Section (loaded from external file) ====== -->
+    <iframe src="components.html" 
+            width="100%" 
+            height="100vh" 
+            frameborder="0" 
+            style="display: block; margin: 0; padding: 0; background: transparent; min-height: 100vh;"
+            title="Product Components Section">
+    </iframe>
+  </main>
+
+  <footer>
+    <div class="shell">© <span id="y"></span> Hive AI — Built for orchestrating hives of collaborating agents.
+      <div style="margin-top:10px">
+        <a class="cta-discord" href="https://discord.gg/your-invite" target="_blank" rel="noopener" aria-label="Join Hive AI on Discord" style="display:inline-flex; align-items:center; gap:10px;">
+          <svg width="18" height="18" viewBox="0 0 245 240" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M104.4 104.1c-5.7 0-10.2 5-10.2 11.1 0 6.1 4.6 11.1 10.2 11.1 5.7 0 10.2-5 10.2-11.1.1-6.1-4.5-11.1-10.2-11.1zm36.2 0c-5.7 0-10.2 5-10.2 11.1 0 6.1 4.6 11.1 10.2 11.1 5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z" fill="#fff"/>
+            <path d="M189.5 20h-134C24.4 20 0 44.4 0 74.8v90.5C0 195.6 24.4 220 55.5 220h113.2l-5.3-18.4 12.8 11.9 12.1 11.2 21.5 19.3V74.8C210 44.4 185.6 20 154.5 20h35z" stroke="rgba(255,255,255,.3)"/>
+          </svg>
+          Join our Discord
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+  // Year in footer
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ====== Header scroll background ======
+  (function() {
+    const header = document.querySelector('header');
+    if (!header) return;
+
+    let ticking = false;
+
+    function updateHeader() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+      
+      ticking = false;
+    }
+
+    function requestTick() {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    }
+
+    window.addEventListener('scroll', requestTick, { passive: true });
+    
+    // Initial check
+    updateHeader();
+  })();
+
+  // ====== Waitlist (front-end only; replace with your backend when ready) ======
+  (function(){
+    const form = document.querySelector('form[data-waitlist]');
+    if(!form) return;
+    const status = form.querySelector('[data-status]') || document.getElementById('status');
+    const input = form.querySelector('#email');
+
+    function setStatus(msg, ok){ if(!status) return; status.textContent = msg; status.setAttribute('data-ok', ok ? '1' : '0'); }
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const email = (input.value || '').trim();
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      if(!valid){ setStatus('Please enter a valid email address.', 0); input.focus(); return; }
+
+      // Local persistence as a placeholder; replace with fetch('/api/early-access') later
+      try {
+        const key = 'hive_waitlist';
+        const list = JSON.parse(localStorage.getItem(key) || '[]');
+        if(!list.includes(email)) list.push(email);
+        localStorage.setItem(key, JSON.stringify(list));
+      } catch(e) { /* ignore */ }
+
+      setStatus("You're on the list! We'll email you when Hive opens.", 1);
+      form.reset();
+    });
+  })();
+
+
+
+  // ====== Hexagon Animation ======
+  (function() {
+    const g = document.getElementById('cluster');
+    if (!g) return;
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const R = 112.5;                    // hex radius (flat-top side length) - 0.75x of 150 for optimal size
+    const ORIGIN = { x: 600, y: 420 };  // starting centre - adjusted for larger size
+    const SQ3 = Math.sqrt(3);
+
+    // Helpers -----------------------------------------------------------
+    const addRAF = fn => requestAnimationFrame(() => requestAnimationFrame(fn));
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Axial -> pixel mapping for FLAT-TOP hexes (tiles touch by SIDES)
+    const axialToPixel = (q, r) => ({
+      x: ORIGIN.x + R * (1.5 * q),
+      y: ORIGIN.y + R * (SQ3 * (r + q/2))
+    });
+
+    // Corner of a flat-top hex (0..5)
+    const corner = (cx, cy, i) => {
+      const angle = Math.PI / 180 * (60 * i);
+      return [ cx + R * Math.cos(angle), cy + R * Math.sin(angle) ];
+    };
+
+    const hexPoints = (cx, cy) => {
+      const pts = [];
+      for (let i = 0; i < 6; i++) pts.push(corner(cx, cy, i));
+      return pts;
+    };
+
+              const perimeter = (pts) => {
+            let L = 0;
+            for (let i = 0; i < pts.length; i++) {
+              const a = pts[i];
+              const b = pts[(i+1) % pts.length];
+              L += Math.hypot(b[0]-a[0], b[1]-a[1]);
+            }
+            return L;
+          };
+
+    // Drawing primitives ------------------------------------------------
+    function ripple(x, y, maxR = 28, dur = 420) {
+      if (reduceMotion) return;
+      const r = document.createElementNS(svgNS, 'circle');
+      r.setAttribute('class', 'ring');
+      r.setAttribute('cx', x); r.setAttribute('cy', y);
+      r.setAttribute('r', 2);
+      r.style.transition = `r ${dur}ms cubic-bezier(.22,.61,.36,1), opacity ${dur}ms ease`;
+      g.appendChild(r);
+      requestAnimationFrame(() => {
+        r.style.opacity = '0.85';
+        r.setAttribute('r', String(maxR));
+        r.style.opacity = '0';
+      });
+      setTimeout(() => r.remove(), dur + 60);
+    }
+
+    function connect(x1, y1, x2, y2, delay = 0, draw = 520, hold = 260, fade = 220) {
+      const l = document.createElementNS(svgNS, 'line');
+      l.setAttribute('class', 'edge');
+      l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+      l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      l.style.strokeDasharray = String(len);
+      l.style.strokeDashoffset = String(len);
+      l.style.transition = `stroke-dashoffset ${draw}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+      g.appendChild(l);
+
+      // Make it visible immediately (so you don't see ghost lines later)
+      l.style.opacity = '0.45';
+
+      if (reduceMotion) {
+        l.style.strokeDashoffset = '0';
+        // quick fade + remove
+        setTimeout(() => { l.remove(); }, Math.max(1, draw));
+        return l;
+      }
+
+      // Animate draw
+      addRAF(() => addRAF(() => { l.style.strokeDashoffset = '0'; }));
+
+      // Fade out after draw+hold, then remove to avoid background lines
+      const ttl = delay + draw + hold;
+      setTimeout(() => {
+        l.style.transition = `opacity ${fade}ms ease`;
+        l.style.opacity = '0';
+        setTimeout(() => l.remove(), fade + 40);
+      }, ttl);
+      return l;
+    }
+
+    function hex(cx, cy, delay = 0, dur = 520) {
+      const pts = hexPoints(cx, cy);
+      const poly = document.createElementNS(svgNS, 'polygon');
+      poly.setAttribute('class', 'hex');
+      poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+      const L = perimeter(pts);
+      poly.style.strokeDasharray = String(L);
+      poly.style.strokeDashoffset = String(L);
+      poly.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+      g.appendChild(poly);
+
+      if (reduceMotion) {
+        poly.style.strokeDashoffset = '0';
+      } else {
+        addRAF(() => addRAF(() => { poly.style.strokeDashoffset = '0'; }));
+      }
+      return { poly, pts };
+    }
+
+    function dots(pts, delay = 0, dur = 220, isRoot = false, hexKey = null) {
+      const circles = [];
+      pts.forEach((p, i) => {
+        const c = document.createElementNS(svgNS, 'circle');
+        c.setAttribute('class', 'dot');
+        c.setAttribute('cx', p[0]);
+        c.setAttribute('cy', p[1]);
+                      c.setAttribute('r', 3.5);
+        
+        // Special color for specific vertices using CSS custom properties
+        if (isRoot && i === 0) {
+          // Rightmost vertex of root hexagon - orange-brown/copper
+          c.style.setProperty('--dot-color', 'rgba(160, 116, 88, 1)');
+        } else if (hexKey === '0,1' && i === 1) {
+          // Vertex 1 (bottom-right) of hexagon below root - orange-brown/copper
+          c.style.setProperty('--dot-color', 'rgba(160, 116, 88, 1)');
+        }
+        
+        c.style.transition = `opacity ${dur}ms ease ${delay + i*20}ms, transform ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay + i*20}ms`;
+        g.appendChild(c);
+        if (reduceMotion) {
+          c.style.opacity = '1';
+          c.style.transform = 'scale(1)';
+        } else {
+          addRAF(() => addRAF(() => { c.style.opacity = '1'; c.style.transform = 'scale(1)'; }));
+        }
+        circles.push(c);
+      });
+      return circles;
+    }
+
+    // Layout ------------------------------------------------------------
+    const core = [
+      { q: 0, r: 0 },   // base (root)
+      { q: 1, r: 0 },   // right of base (target for interactivity)
+      { q: 2, r: 0 },   // further right
+      { q: 1, r: -1 }   // upper-right touching the middle
+    ];
+
+    const extras = [
+      { q: -1, r: 0 },
+      { q: 3,  r: 0 },
+      { q: 0,  r: -1 },
+      { q: 2,  r: -1 }
+    ];
+
+    const below = [
+      { q: 0, r: 1 },
+      { q: 1, r: 1 },
+      { q: 2, r: 1 }
+    ];
+
+    const cells = [...core, ...extras, ...below];
+
+    // Index by axial key and centres
+    const key = (q,r) => `${q},${r}`;
+    const cellSet = new Set(cells.map(c => key(c.q,c.r)));
+    const centres = new Map();
+    cells.forEach(c => { centres.set(key(c.q,c.r), axialToPixel(c.q, c.r)); });
+
+    // Axial neighbour deltas for flat-top (all 6)
+    const NEI6 = [ [1,0], [1,-1], [0,-1], [-1,0], [-1,1], [0,1] ];
+    // Unique undirected directions to avoid duplicates
+    const UNI3 = [ [1,0], [1,-1], [0,-1] ];
+
+    // BFS tree (parent -> child) starting from root (0,0)
+    const rootKey = key(0,0);
+    // root hexagon for interactivity: (0,0)
+    const targetKey = key(0,0);
+    let targetDots = null;
+    const visited = new Set([rootKey]);
+    const queue = [rootKey];
+    const treeEdges = []; // [parentKey, childKey]
+    const treeEdgeSet = new Set();
+    const level = new Map([[rootKey, 0]]);
+
+    while (queue.length) {
+      const pk = queue.shift();
+      const [pq, pr] = pk.split(',').map(Number);
+      NEI6.forEach(([dq, dr]) => {
+        const nq = pq + dq, nr = pr + dr, nk = key(nq,nr);
+        if (cellSet.has(nk) && !visited.has(nk)) {
+          visited.add(nk);
+          queue.push(nk);
+          level.set(nk, (level.get(pk)||0) + 1);
+          treeEdges.push([pk, nk]);
+          // undirected key
+          const ek = [pk, nk].sort().join('>');
+          treeEdgeSet.add(ek);
+        }
+      });
+    }
+
+    // All neighbour connections (ensure every adjacent pair is present)
+    const allEdges = [];
+    cells.forEach(({q,r}) => {
+      UNI3.forEach(([dq,dr]) => {
+        const a = key(q,r), b = key(q+dq, r+dr);
+        if (cellSet.has(b)) allEdges.push([a,b]);
+      });
+    });
+
+    // Extra edges not in the tree (for full connectivity)
+    const extraEdges = allEdges.filter(([a,b]) => !treeEdgeSet.has([a,b].sort().join('>')));
+
+    // --- Timeline ------------------------------------------------------
+    let t = 80;
+    let maxEnd = 0; // track when everything finishes
+    const revealAt = new Map();
+
+    // Root: vertices then outline
+    const rootC = centres.get(rootKey);
+    const rootPts = hexPoints(rootC.x, rootC.y);
+    const t0 = t;
+    const rootDots = dots(rootPts, t, 240, true); // vertices first, mark as root
+    // Since root is our target, capture these dots for interactivity
+    if (targetKey === rootKey) targetDots = rootDots;
+    const rootDotsEnd = t0 + 100 + 240;     // last of 6 dots (i*20 => 100)
+    maxEnd = Math.max(maxEnd, rootDotsEnd);
+    t += 120;
+
+    hex(rootC.x, rootC.y, t, 520);         // draw root outline
+    const rootHexEnd = t + 520;
+    maxEnd = Math.max(maxEnd, rootHexEnd);
+    revealAt.set(rootKey, t);
+    t += 180;
+
+    // Animate tree edges outward (guarantees every node appears)
+    treeEdges.forEach(([pk, ck]) => {
+      const start = t;
+      const p = centres.get(pk);
+      const c = centres.get(ck);
+      connect(p.x, p.y, c.x, c.y, start, 520, 280, 220); // draw -> hold -> fade
+      const connectEnd = start + 520 + 280 + 220;
+      maxEnd = Math.max(maxEnd, connectEnd);
+
+      hex(c.x, c.y, start + 220, 520); // child outline
+      const hexEnd = start + 220 + 520;
+      maxEnd = Math.max(maxEnd, hexEnd);
+
+      const cPts = hexPoints(c.x, c.y);
+      const created = dots(cPts, start + 260, 220, false, ck);
+      if (ck === targetKey) targetDots = created; // capture target dots
+      const childDotsEnd = start + 260 + 100 + 220;
+      maxEnd = Math.max(maxEnd, childDotsEnd);
+
+      revealAt.set(ck, start + 220);
+      t += 200; // advance timeline
+    });
+
+    // After nodes are in, add remaining neighbour links, then fade them
+    extraEdges.forEach(([a,b]) => {
+      const A = centres.get(a), B = centres.get(b);
+      const dly = Math.max(revealAt.get(a) || 0, revealAt.get(b) || 0) + 240;
+      connect(A.x, A.y, B.x, B.y, dly, 420, 160, 200);
+      const extraEnd = dly + 420 + 160 + 200;
+      maxEnd = Math.max(maxEnd, extraEnd);
+    });
+
+    // Enable throbbing animation on the 6 vertices *after* all animations complete
+    setTimeout(() => {
+      (targetDots || []).forEach(d => {
+        d.classList.add('interactive');
+      });
+    }, reduceMotion ? 0 : (maxEnd + 60));
+  })();
+
+  // ====== DAG animation for middle component — only on hover/focus, with zoom narrative ======
+  (function () {
+    const stage = document.getElementById('dag-stage');
+    const card  = document.getElementById('api');
+    if(!stage || !card) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
+    const ease  = (t) => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+
+    let playing = false; let timers = []; let rafs = [];
+    const addTimeout = (fn, ms) => { const id = setTimeout(fn, ms); timers.push(id); return id; };
+    const addRAF = (cb) => { const id = requestAnimationFrame(cb); rafs.push(id); return id; };
+    function clearAll(){ timers.forEach(clearTimeout); timers = []; rafs.forEach(cancelAnimationFrame); rafs = []; }
+
+    function animateViewBox(svg, from, to, dur = 800) {
+      return new Promise(resolve => {
+        const t0 = performance.now();
+        const tick = (ts) => {
+          if(!playing) return resolve();
+          const p = clamp((ts - t0) / dur, 0, 1);
+          const e = ease(p);
+          const vx = from.x + (to.x - from.x) * e;
+          const vy = from.y + (to.y - from.y) * e;
+          const vw = from.w + (to.w - from.w) * e;
+          const vh = from.h + (to.h - from.h) * e;
+          svg.setAttribute('viewBox', `${vx} ${vy} ${vw} ${vh}`);
+          if (p < 1) addRAF(tick); else resolve();
+        };
+        addRAF(tick);
+      });
+    }
+
+    function buildDAG() {
+      stage.innerHTML = '';
+
+      // --- SVG scaffold
+      const W = 900, H = 360;
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.classList.add('dag');
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      stage.appendChild(svg);
+
+      // Keep drawing order tidy
+      const scene = document.createElementNS(svgNS, 'g');
+      svg.appendChild(scene);
+
+      // --- Layout (radial, 1 -> 3 -> 9)
+      const cx = W / 2, cy = H / 2;
+      const r1 = 110, r2 = 210; // radii for level 1 and 2
+      const toRad = a => a * Math.PI / 180;
+
+      // Level-1 directions (up, bottom-left, bottom-right)
+      const a1 = [-90, 150, 30];
+      const p1 = a1.map(a => ({ x: cx + r1 * Math.cos(toRad(a)), y: cy + r1 * Math.sin(toRad(a)), a }));
+
+      // Level-2 for each level-1: fan out with small angle offsets
+      const offsets = [-25, 0, 25];
+      const p2 = [];
+      p1.forEach(({ a }) => {
+        offsets.forEach(off => {
+          const aa = a + off;
+          p2.push({ x: cx + r2 * Math.cos(toRad(aa)), y: cy + r2 * Math.sin(toRad(aa)), a: aa });
+        });
+      });
+
+      // --- Helpers
+      function edge(x1, y1, x2, y2, delay = 0, dur = 520) {
+        const l = document.createElementNS(svgNS, 'line');
+        l.setAttribute('class', 'edge');
+        l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+        l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        l.style.strokeDasharray = String(len);
+        l.style.strokeDashoffset = String(len);
+        l.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+        scene.appendChild(l);
+        addRAF(() => addRAF(() => { l.style.strokeDashoffset = '0'; }));
+        return l;
+      }
+
+      function node(x, y, delay = 0) {
+        const r = document.createElementNS(svgNS, 'rect');
+        r.setAttribute('class', 'square');
+        r.setAttribute('x', x - 8);
+        r.setAttribute('y', y - 8);
+        r.setAttribute('width', '16');
+        r.setAttribute('height', '16');
+        r.setAttribute('rx', '3'); r.setAttribute('ry', '3');
+        r.style.opacity = '0';
+        r.style.transformOrigin = `${x}px ${y}px`;
+        r.style.transform = 'scale(.7)';
+        r.style.transition = `opacity 220ms ease ${delay}ms, transform 220ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+        scene.appendChild(r);
+        addRAF(() => addRAF(() => { r.style.opacity = '1'; r.style.transform = 'scale(1)'; }));
+        return r;
+      }
+
+      function label(x, y, text, w = 280) {
+        const g = document.createElementNS(svgNS, 'g');
+        g.setAttribute('class', 'label');
+        const padX = 14, padY = 10; const estW = Math.max(160, w); const estH = 62;
+        const rect = document.createElementNS(svgNS, 'rect'); rect.setAttribute('x', x + 16); rect.setAttribute('y', y - estH - 6); rect.setAttribute('width', estW); rect.setAttribute('height', estH);
+        const txt = document.createElementNS(svgNS, 'text'); txt.setAttribute('x', x + 16 + padX); txt.setAttribute('y', y - estH + padY + 12); txt.textContent = text; // safe
+        g.appendChild(rect); g.appendChild(txt);
+        g.style.opacity = '0'; g.style.transition = 'opacity 250ms ease';
+        scene.appendChild(g);
+        addRAF(() => addRAF(() => { g.style.opacity = '1'; }));
+        return g;
+      }
+
+      // --- Timeline
+      let t = 80;
+      node(cx, cy, t); t += 120; // root
+      // root -> level-1
+      p1.forEach(p => { edge(cx, cy, p.x, p.y, t, 520); node(p.x, p.y, t + 260); t += 240; });
+      // level-1 -> level-2 (9 edges + 9 nodes)
+      let k = 0; p1.forEach(p => { offsets.forEach(() => { const c = p2[k++]; edge(p.x, p.y, c.x, c.y, t, 480); node(c.x, c.y, t + 240); t += 180; }); });
+
+      // --- Camera narrative: zoom to labels, then back out
+      const startNarrativeAfter = t + 600; // let final edges finish
+      const currentView = () => { const [x, y, w, h] = (svg.getAttribute('viewBox') || `0 0 ${W} ${H}`).split(/\s+/).map(Number); return { x, y, w, h }; };
+      const viewOf = (x, y, scale) => { const tw = W / scale, th = H / scale; return { x: clamp(x - tw / 2, 0, W - tw), y: clamp(y - th / 2, 0, H - th), w: tw, h: th }; };
+      const showOnce = (x, y, text, hold = 2000) => new Promise(res => { const g = label(x, y, text); addTimeout(() => { g.style.opacity = '0'; addTimeout(() => { g.remove(); res(); }, 260); }, hold); });
+
+      addTimeout(async () => {
+        if(!playing) return;
+        // 1) Orchestrator (root)
+        await animateViewBox(svg, currentView(), viewOf(cx, cy, 2.2), 800);
+        const rootNode = scene.querySelector('rect.square'); if (rootNode) rootNode.classList.add('is-highlight');
+        await showOnce(cx, cy, '{\n  "role": "Orchestrator",\n  "responsibility": "Plans & coordinates"\n}', 2200);
+        if (rootNode) rootNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 2) Team Lead (top child)
+        const lead = p1[0];
+        await animateViewBox(svg, currentView(), viewOf(lead.x, lead.y, 2.2), 800);
+        const leadNode = scene.querySelectorAll('rect.square')[1]; if (leadNode) leadNode.classList.add('is-highlight');
+        await showOnce(lead.x, lead.y, '{\n  "role": "Team Lead",\n  "tasks": ["delegate", "review"]\n}', 2200);
+        if (leadNode) leadNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 3) Worker Agent (first leaf under that lead)
+        const worker = p2[0];
+        await animateViewBox(svg, currentView(), viewOf(worker.x, worker.y, 2.4), 800);
+        const workerNode = scene.querySelectorAll('rect.square')[4]; if (workerNode) workerNode.classList.add('is-highlight');
+        await showOnce(worker.x, worker.y, '{\n  "role": "Worker",\n  "action": "execute"\n}', 2200);
+        if (workerNode) workerNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 4) Return to full view
+        await animateViewBox(svg, currentView(), { x: 0, y: 0, w: W, h: H }, 800);
+      }, startNarrativeAfter);
+    }
+
+    function start() { if (playing || reduceMotion) return; playing = true; buildDAG(); }
+    function stop()  { if (!playing) return; playing = false; clearAll(); stage.innerHTML = ''; }
+    card.addEventListener('mouseenter', start);
+    card.addEventListener('mouseleave', stop);
+    card.addEventListener('focus', start);
+    card.addEventListener('blur', stop);
+  })();
+  </script>
+</body>
+</html>

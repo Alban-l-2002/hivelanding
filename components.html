@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* Full self-contained component styling */
+    :root { --stage-h: 260px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-optical-sizing: auto;
+      background: #0a0c10;
+      color: #e8eef9;
+      line-height: 1.6;
+      overflow: hidden;
+    }
+    
+    .section{ 
+      padding: 48px 0 84px;
+      min-height: 100vh;
+      background: #0a0c10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .shell { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    /* ====== Cards section (3 components) ====== */
+    .grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+
+    .panel{
+      position: relative;
+      display:flex; flex-direction:column; gap:12px;
+      background: transparent;
+      border: 1px solid transparent; /* avoid layout shift on hover */
+      border-left: 2px solid rgba(255,255,255,0.15); /* left border always visible */
+      border-radius: 0; /* remove curved edges */
+      padding: 22px 22px 18px; 
+      min-height: 420px; /* Fixed reasonable height */
+      overflow: hidden;
+      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+
+    .panel:hover{
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.22); /* full border on hover */
+      border-left: 2px solid rgba(255,255,255,0.4); /* keep left border stronger */
+      box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+      transform: translateY(-2px);
+    }
+
+    .stage{ height: var(--stage-h, 260px); background: radial-gradient(600px 200px at 50% -100px, rgba(255,255,255,0.06), rgba(0,0,0,0)); border-radius: 0; }
+    .title{ font-weight: 750; font-size: 22px; letter-spacing:.2px; margin: 10px 2px 6px; color:#e8eef9; }
+    .desc{ margin: 0 2px 16px; color: #9fb2c7; line-height: 1.6; font-size: 14.5px; max-width: 50ch; }
+    .actions{ display:flex; gap:12px; align-items:center; margin-top:auto; }
+    .ghost{ appearance:none; background: transparent; color:#e8eef9; border:1px solid rgba(255,255,255,0.20); border-radius:999px; padding:10px 14px; font-weight:800; letter-spacing:.3px; cursor:pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; font-size:13px; box-shadow:none; font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; text-transform: uppercase; }
+
+    .ghost:hover{ background: rgba(255,255,255,0.06); transform: translateY(-1px); }
+
+    /* DAG demo styling (middle component) */
+    .dag-demo { height: var(--stage-h, 260px); margin: 0; text-align: left; display:flex; }
+    .dag-stage { height: 100%; width: 100%; border-radius: 0; background: radial-gradient(600px 200px at 50% -100px, rgba(255,255,255,0.06), rgba(0,0,0,0)); }
+    .dag .square { fill: #e9eef7; rx: 3; ry: 3; transition: fill .25s ease, transform .25s ease, filter .25s ease; }
+    .dag .square.is-highlight { fill: #ffd479; transform: scale(1.25); filter: drop-shadow(0 0 12px rgba(255,212,121,0.55)); }
+    .dag .edge   { stroke: #e9eef7; stroke-opacity: .75; stroke-width: 3; stroke-linecap: round; }
+    .label text { fill:#e9eef7; font-weight:700; font-size:14px; letter-spacing:.2px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .label rect { fill: rgba(0,0,0,0.55); stroke: rgba(255,255,255,0.25); stroke-width:1; rx:8; }
+
+    /* SVG styling (weave) */
+    .trail{ fill:none; stroke:#e9eef7; stroke-opacity:.9; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+    .square{ fill:#e9eef7; rx:4; ry:4; }
+
+    /* Accessibility / focus */
+    .ghost:focus-visible, .panel:focus-visible{
+      outline: 3px solid rgba(168, 200, 255, .9);
+      outline-offset: 2px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      .panel, .ghost { transition: none !important; }
+      .dag .edge { transition: none !important; }
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; gap: 24px; }
+      .panel{ min-height: 420px; }
+      .grid > .panel:not(:first-child){ box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== Three components (animation on hover) ====== -->
+  <section class="section shell" id="product">
+    <div class="grid">
+      <article class="panel" data-card tabindex="0" role="button" aria-label="Quick Swarm animation">
+        <div class="title">Quick Swarm</div>
+        <p class="desc">Compose specialised agents into a single coordinated unit. Hover or focus to see the synchronised weave that powers Hive scheduling and messaging.</p>
+        <div class="stage" data-weave></div>
+        <div class="actions"><button class="ghost" type="button">Create Hive →</button></div>
+      </article>
+
+      <article class="panel" data-card id="api" tabindex="0" role="button" aria-label="Hive Mini DAG animation">
+        <div class="title">Hive Mini</div>
+        <p class="desc">Control phases, pass tasks, capture artefacts. Animation idles until you hover or focus.</p>
+        <div class="dag-demo" aria-label="DAG formation animation">
+          <div class="dag-stage" id="dag-stage"></div>
+        </div>
+        <div class="actions"><button class="ghost" type="button">Read API →</button></div>
+      </article>
+
+      <article class="panel" data-card id="docs" tabindex="0" role="button" aria-label="Hive Pro animation">
+        <div class="title">Hive Pro</div>
+        <p class="desc">Guides for agents, tools, state, and evaluation. Hover or focus to play the centre weave.</p>
+        <div class="stage" data-weave></div>
+        <div class="actions"><button class="ghost" type="button">Open Docs →</button></div>
+      </article>
+    </div>
+  </section>
+
+  <script>
+  // ====== Reusable Weave animation that only runs on hover/focus ======
+  class Weave {
+    constructor(host, opts={}){
+      this.host = host;
+      this.opts = Object.assign({ width: 800, height: 240, amplitude: 46, frequency: 0.38, tailLength: 320, waveSpeed: 120, dx: 6 }, opts);
+      this._build();
+      this.playing = false; this._raf = null; this._t0 = 0; this._base = 0;
+      this._idle();
+    }
+    _build(){
+      const {width:W, height:H} = this.opts; this.cx = W/2; this.cy = H/2;
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+      svg.style.width = '100%'; svg.style.height = '100%'; svg.style.display = 'block';
+      this.trails = [0,1,2].map(()=>{ const p = document.createElementNS(svgNS, 'path'); p.setAttribute('class','trail'); svg.appendChild(p); return p; });
+      this.squares = [0,1,2].map(()=>{ const r = document.createElementNS(svgNS, 'rect'); r.setAttribute('class','square'); r.setAttribute('x','-10'); r.setAttribute('y','-10'); r.setAttribute('width','20'); r.setAttribute('height','20'); svg.appendChild(r); return r; });
+      this.host.appendChild(svg); this.svg = svg; this.phases = [0, 2*Math.PI/3, 4*Math.PI/3];
+      const {tailLength, dx} = this.opts; this.SAMPLES = Math.max(2, Math.floor(tailLength/dx)); this.dt = dx / this.opts.waveSpeed; this.omega = 2*Math.PI*this.opts.frequency;
+    }
+    _pathAt(t, phase){ const {SAMPLES, dt, omega, cx, cy} = this; const {dx, amplitude} = this.opts; let d=''; for(let i=0;i<=SAMPLES;i++){ const x=cx - i*dx; const y = cy + amplitude*Math.sin(omega*(t - i*dt) + phase); d += (i? ' L ':'M ') + x.toFixed(2) + ' ' + y.toFixed(2);} return d; }
+    _draw(t){ for(let k=0;k<3;k++){ const phase = this.phases[k]; this.trails[k].setAttribute('d', this._pathAt(t, phase)); const y = this.cy + this.opts.amplitude * Math.sin(this.omega * t + phase); this.squares[k].setAttribute('transform', `translate(${this.cx}, ${y})`);} }
+    _tick = (ts)=>{ if(!this.playing) return; if(this._t0===0) this._t0 = ts; const t = this._base + (ts - this._t0)/1000; this._draw(t); this._raf = requestAnimationFrame(this._tick); }
+    start(){ if(this.playing) return; this.playing = true; this._t0 = 0; this._raf = requestAnimationFrame(this._tick); }
+    stop(resetIdle=false){ if(!this.playing && !resetIdle) return; cancelAnimationFrame(this._raf); this._raf=null; this.playing=false; this._base = 0; if(resetIdle) this._idle(); }
+    _idle(){ const keepAmp = this.opts.amplitude * 0.15; const prevAmp = this.opts.amplitude; this.opts.amplitude = keepAmp; const t = 0; this._draw(t); this.opts.amplitude = prevAmp; }
+  }
+
+  // Mount weave instances with keyboard + reduced motion support
+  (function(){
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.querySelectorAll('[data-weave]').forEach(stage=>{
+      const sim = new Weave(stage);
+      const card = stage.closest('[data-card]');
+      function start(){ if(!reduceMotion) sim.start(); }
+      function stop(){ sim.stop(true); }
+      card.addEventListener('mouseenter', start);
+      card.addEventListener('mouseleave', stop);
+      card.addEventListener('focus', start);
+      card.addEventListener('blur', stop);
+      card.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); start(); }
+        if(e.key === 'Escape'){ stop(); }
+      });
+    });
+  })();
+
+  // ====== DAG animation for middle component — only on hover/focus, with zoom narrative ======
+  (function () {
+    const stage = document.getElementById('dag-stage');
+    const card  = document.getElementById('api');
+    if(!stage || !card) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
+    const ease  = (t) => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
+
+    let playing = false; let timers = []; let rafs = [];
+    const addTimeout = (fn, ms) => { const id = setTimeout(fn, ms); timers.push(id); return id; };
+    const addRAF = (cb) => { const id = requestAnimationFrame(cb); rafs.push(id); return id; };
+    function clearAll(){ timers.forEach(clearTimeout); timers = []; rafs.forEach(cancelAnimationFrame); rafs = []; }
+
+    function animateViewBox(svg, from, to, dur = 800) {
+      return new Promise(resolve => {
+        const t0 = performance.now();
+        const tick = (ts) => {
+          if(!playing) return resolve();
+          const p = clamp((ts - t0) / dur, 0, 1);
+          const e = ease(p);
+          const vx = from.x + (to.x - from.x) * e;
+          const vy = from.y + (to.y - from.y) * e;
+          const vw = from.w + (to.w - from.w) * e;
+          const vh = from.h + (to.h - from.h) * e;
+          svg.setAttribute('viewBox', `${vx} ${vy} ${vw} ${vh}`);
+          if (p < 1) addRAF(tick); else resolve();
+        };
+        addRAF(tick);
+      });
+    }
+
+    function buildDAG() {
+      stage.innerHTML = '';
+
+      // --- SVG scaffold
+      const W = 900, H = 360;
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.classList.add('dag');
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.style.width = '100%';
+      svg.style.height = '100%';
+      stage.appendChild(svg);
+
+      // Keep drawing order tidy
+      const scene = document.createElementNS(svgNS, 'g');
+      svg.appendChild(scene);
+
+      // --- Layout (radial, 1 -> 3 -> 9)
+      const cx = W / 2, cy = H / 2;
+      const r1 = 110, r2 = 210; // radii for level 1 and 2
+      const toRad = a => a * Math.PI / 180;
+
+      // Level-1 directions (up, bottom-left, bottom-right)
+      const a1 = [-90, 150, 30];
+      const p1 = a1.map(a => ({ x: cx + r1 * Math.cos(toRad(a)), y: cy + r1 * Math.sin(toRad(a)), a }));
+
+      // Level-2 for each level-1: fan out with small angle offsets
+      const offsets = [-25, 0, 25];
+      const p2 = [];
+      p1.forEach(({ a }) => {
+        offsets.forEach(off => {
+          const aa = a + off;
+          p2.push({ x: cx + r2 * Math.cos(toRad(aa)), y: cy + r2 * Math.sin(toRad(aa)), a: aa });
+        });
+      });
+
+      // --- Helpers
+      function edge(x1, y1, x2, y2, delay = 0, dur = 520) {
+        const l = document.createElementNS(svgNS, 'line');
+        l.setAttribute('class', 'edge');
+        l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+        l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+        const len = Math.hypot(x2 - x1, y2 - y1);
+        l.style.strokeDasharray = String(len);
+        l.style.strokeDashoffset = String(len);
+        l.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+        scene.appendChild(l);
+        addRAF(() => addRAF(() => { l.style.strokeDashoffset = '0'; }));
+        return l;
+      }
+
+      function node(x, y, delay = 0) {
+        const r = document.createElementNS(svgNS, 'rect');
+        r.setAttribute('class', 'square');
+        r.setAttribute('x', x - 8);
+        r.setAttribute('y', y - 8);
+        r.setAttribute('width', '16');
+        r.setAttribute('height', '16');
+        r.setAttribute('rx', '3'); r.setAttribute('ry', '3');
+        r.style.opacity = '0';
+        r.style.transformOrigin = `${x}px ${y}px`;
+        r.style.transform = 'scale(.7)';
+        r.style.transition = `opacity 220ms ease ${delay}ms, transform 220ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+        scene.appendChild(r);
+        addRAF(() => addRAF(() => { r.style.opacity = '1'; r.style.transform = 'scale(1)'; }));
+        return r;
+      }
+
+      function label(x, y, text, w = 280) {
+        const g = document.createElementNS(svgNS, 'g');
+        g.setAttribute('class', 'label');
+        const padX = 14, padY = 10; const estW = Math.max(160, w); const estH = 62;
+        const rect = document.createElementNS(svgNS, 'rect'); rect.setAttribute('x', x + 16); rect.setAttribute('y', y - estH - 6); rect.setAttribute('width', estW); rect.setAttribute('height', estH);
+        const txt = document.createElementNS(svgNS, 'text'); txt.setAttribute('x', x + 16 + padX); txt.setAttribute('y', y - estH + padY + 12); txt.textContent = text; // safe
+        g.appendChild(rect); g.appendChild(txt);
+        g.style.opacity = '0'; g.style.transition = 'opacity 250ms ease';
+        scene.appendChild(g);
+        addRAF(() => addRAF(() => { g.style.opacity = '1'; }));
+        return g;
+      }
+
+      // --- Timeline
+      let t = 80;
+      node(cx, cy, t); t += 120; // root
+      // root -> level-1
+      p1.forEach(p => { edge(cx, cy, p.x, p.y, t, 520); node(p.x, p.y, t + 260); t += 240; });
+      // level-1 -> level-2 (9 edges + 9 nodes)
+      let k = 0; p1.forEach(p => { offsets.forEach(() => { const c = p2[k++]; edge(p.x, p.y, c.x, c.y, t, 480); node(c.x, c.y, t + 240); t += 180; }); });
+
+      // --- Camera narrative: zoom to labels, then back out
+      const startNarrativeAfter = t + 600; // let final edges finish
+      const currentView = () => { const [x, y, w, h] = (svg.getAttribute('viewBox') || `0 0 ${W} ${H}`).split(/\s+/).map(Number); return { x, y, w, h }; };
+      const viewOf = (x, y, scale) => { const tw = W / scale, th = H / scale; return { x: clamp(x - tw / 2, 0, W - tw), y: clamp(y - th / 2, 0, H - th), w: tw, h: th }; };
+      const showOnce = (x, y, text, hold = 2000) => new Promise(res => { const g = label(x, y, text); addTimeout(() => { g.style.opacity = '0'; addTimeout(() => { g.remove(); res(); }, 260); }, hold); });
+
+      addTimeout(async () => {
+        if(!playing) return;
+        // 1) Orchestrator (root)
+        await animateViewBox(svg, currentView(), viewOf(cx, cy, 2.2), 800);
+        const rootNode = scene.querySelector('rect.square'); if (rootNode) rootNode.classList.add('is-highlight');
+        await showOnce(cx, cy, '{\n  "role": "Orchestrator",\n  "responsibility": "Plans & coordinates"\n}', 2200);
+        if (rootNode) rootNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 2) Team Lead (top child)
+        const lead = p1[0];
+        await animateViewBox(svg, currentView(), viewOf(lead.x, lead.y, 2.2), 800);
+        const leadNode = scene.querySelectorAll('rect.square')[1]; if (leadNode) leadNode.classList.add('is-highlight');
+        await showOnce(lead.x, lead.y, '{\n  "role": "Team Lead",\n  "tasks": ["delegate", "review"]\n}', 2200);
+        if (leadNode) leadNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 3) Worker Agent (first leaf under that lead)
+        const worker = p2[0];
+        await animateViewBox(svg, currentView(), viewOf(worker.x, worker.y, 2.4), 800);
+        const workerNode = scene.querySelectorAll('rect.square')[4]; if (workerNode) workerNode.classList.add('is-highlight');
+        await showOnce(worker.x, worker.y, '{\n  "role": "Worker",\n  "action": "execute"\n}', 2200);
+        if (workerNode) workerNode.classList.remove('is-highlight');
+        if(!playing) return;
+        // 4) Return to full view
+        await animateViewBox(svg, currentView(), { x: 0, y: 0, w: W, h: H }, 800);
+      }, startNarrativeAfter);
+    }
+
+    function start() { if (playing || reduceMotion) return; playing = true; buildDAG(); }
+    function stop()  { if (!playing) return; playing = false; clearAll(); stage.innerHTML = ''; }
+    card.addEventListener('mouseenter', start);
+    card.addEventListener('mouseleave', stop);
+    card.addEventListener('focus', start);
+    card.addEventListener('blur', stop);
+  })();
+  </script>
+</body>
+</html>

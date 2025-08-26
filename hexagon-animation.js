@@ -78,12 +78,12 @@
     grad.setAttribute('r', rr);
     const s0 = document.createElementNS(svgNS, 'stop');
     s0.setAttribute('offset', '0%');
-    s0.setAttribute('stop-color', 'rgba(160, 116, 88, 1)');  // Orange-brown center
+    s0.setAttribute('stop-color', 'rgba(180, 140, 110, 1)');  // Brighter orange-brown center
     s0.setAttribute('stop-opacity', '1');
     const s1 = document.createElementNS(svgNS, 'stop');
     s1.setAttribute('offset', '100%');
-    s1.setAttribute('stop-color', 'rgba(52, 76, 95, 1)');    // Blue-gray edge
-    s1.setAttribute('stop-opacity', '0.8');
+    s1.setAttribute('stop-color', 'rgba(70, 100, 120, 1)');    // Brighter blue-gray edge
+    s1.setAttribute('stop-opacity', '1');
     grad.appendChild(s0);
     grad.appendChild(s1);
     

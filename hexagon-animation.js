@@ -40,6 +40,62 @@
     return L;
   };
 
+  // ---------- Gradient utilities ----------
+  function paintStroke(el) {
+    // Assign via property LAST to control how style.fill/stroke serialises
+    el.setAttribute('style', `${el.getAttribute('style')||''};stroke:url(#colorField)`);
+    el.style.stroke = 'url(#colorField)';
+  }
+  function paintFill(el) {
+    el.setAttribute('style', `${el.getAttribute('style')||''};fill:url(#colorField)`);
+    el.style.fill = 'url(#colorField)'; // final write so el.style.fill returns exactly this
+  }
+  function forceAllDotsInlineFill() {
+    const dots = g.querySelectorAll('circle.dot');
+    dots.forEach(d => {
+      // strip any previous fill then re-apply exact token
+      const raw = (d.getAttribute('style')||'').replace(/fill\s*:\s*[^;]+;?/gi,'');
+      d.setAttribute('style', raw);
+      d.style.removeProperty('fill');
+      d.setAttribute('style', `${d.getAttribute('style')||''};fill:url(#colorField)`);
+      d.style.fill = 'url(#colorField)';
+    });
+  }
+
+  // Create/update the radial colour field centred at the dot below the target hex
+  function upsertColorFieldGradient(tc) {
+    const existing = document.getElementById('colorField');
+    if (existing) existing.remove();
+    const grad = document.createElementNS(svgNS, 'radialGradient');
+    grad.setAttribute('id', 'colorField');
+    grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+    const p = corner(tc.x, tc.y, 1); // move hotspot to the dot BELOW the hex (corner index 1)
+    const cx = p[0];
+    const cy = p[1];
+    const rr = R * 2.8;       // radius of the color field
+    grad.setAttribute('cx', cx);
+    grad.setAttribute('cy', cy);
+    grad.setAttribute('r', rr);
+    const s0 = document.createElementNS(svgNS, 'stop');
+    s0.setAttribute('offset', '0%');
+    s0.setAttribute('stop-color', 'rgba(160, 116, 88, 1)');  // Orange-brown center
+    s0.setAttribute('stop-opacity', '1');
+    const s1 = document.createElementNS(svgNS, 'stop');
+    s1.setAttribute('offset', '100%');
+    s1.setAttribute('stop-color', 'rgba(52, 76, 95, 1)');    // Blue-gray edge
+    s1.setAttribute('stop-opacity', '0.8');
+    grad.appendChild(s0);
+    grad.appendChild(s1);
+    
+    // Find existing defs or create one
+    let defs = document.querySelector('#cluster').closest('svg').querySelector('defs');
+    if (!defs) {
+      defs = document.createElementNS(svgNS, 'defs');
+      document.querySelector('#cluster').closest('svg').appendChild(defs);
+    }
+    defs.appendChild(grad);
+  }
+
   // Drawing primitives ------------------------------------------------
   function ripple(x, y, maxR = 28, dur = 420) {
     if (reduceMotion) return;
@@ -66,10 +122,11 @@
     l.style.strokeDasharray = String(len);
     l.style.strokeDashoffset = String(len);
     l.style.transition = `stroke-dashoffset ${draw}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+    paintStroke(l);
     g.appendChild(l);
 
     // Make it visible immediately (so you don't see ghost lines later)
-    l.style.opacity = '0.45';
+    l.style.opacity = '1';
 
     if (reduceMotion) {
       l.style.strokeDashoffset = '0';
@@ -79,7 +136,7 @@
     }
 
     // Animate draw
-    addRAF(() => addRAF(() => { l.style.strokeDashoffset = '0'; }));
+    addRAF(() => addRAF(() => { l.style.strokeDashoffset = '0'; paintStroke(l); }));
 
     // Fade out after draw+hold, then remove to avoid background lines
     const ttl = delay + draw + hold;
@@ -100,12 +157,13 @@
     poly.style.strokeDasharray = String(L);
     poly.style.strokeDashoffset = String(L);
     poly.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay}ms`;
+    paintStroke(poly);
     g.appendChild(poly);
 
     if (reduceMotion) {
       poly.style.strokeDashoffset = '0';
     } else {
-      addRAF(() => addRAF(() => { poly.style.strokeDashoffset = '0'; }));
+      addRAF(() => addRAF(() => { poly.style.strokeDashoffset = '0'; paintStroke(poly); }));
     }
     return { poly, pts };
   }
@@ -118,23 +176,15 @@
       c.setAttribute('cx', p[0]);
       c.setAttribute('cy', p[1]);
       c.setAttribute('r', 3.5);
-      
-      // Special color for specific vertices using CSS custom properties
-      if (isRoot && i === 0) {
-        // Rightmost vertex of root hexagon - orange-brown/copper
-        c.style.setProperty('--dot-color', 'rgba(160, 116, 88, 1)');
-      } else if (hexKey === '0,1' && i === 1) {
-        // Vertex 1 (bottom-right) of hexagon below root - orange-brown/copper
-        c.style.setProperty('--dot-color', 'rgba(160, 116, 88, 1)');
-      }
-      
       c.style.transition = `opacity ${dur}ms ease ${delay + i*20}ms, transform ${dur}ms cubic-bezier(.2,.6,.2,1) ${delay + i*20}ms`;
+      paintFill(c); // ensure inline style immediately
       g.appendChild(c);
       if (reduceMotion) {
-        c.style.opacity = '1';
+        c.style.opacity = '1'; // Full opacity - no transparency
         c.style.transform = 'scale(1)';
+        paintFill(c); // reinforce after append
       } else {
-        addRAF(() => addRAF(() => { c.style.opacity = '1'; c.style.transform = 'scale(1)'; }));
+        addRAF(() => addRAF(() => { c.style.opacity = '1'; c.style.transform = 'scale(1)'; paintFill(c); }));
       }
       circles.push(c);
     });
@@ -179,6 +229,9 @@
   const rootKey = key(0,0);
   // root hexagon for interactivity: (0,0)
   const targetKey = key(0,0);
+
+  // Now that centres exist, position the gradient
+  upsertColorFieldGradient(centres.get(targetKey) || axialToPixel(0,0));
   let targetDots = null;
   const visited = new Set([rootKey]);
   const queue = [rootKey];
@@ -269,10 +322,101 @@
     maxEnd = Math.max(maxEnd, extraEnd);
   });
 
+  // One more hardening pass to guarantee inline style value consistency
+  forceAllDotsInlineFill();
+
   // Enable throbbing animation on the 6 vertices *after* all animations complete
   setTimeout(() => {
     (targetDots || []).forEach(d => {
       d.classList.add('interactive');
+      const x = +d.getAttribute('cx');
+      const y = +d.getAttribute('cy');
+      const trigger = () => ripple(x, y, 32, 480);
+      d.addEventListener('mouseenter', trigger);
+      d.addEventListener('focus', trigger);
+      paintFill(d);
     });
+    // And patch them all again post-class change
+    forceAllDotsInlineFill();
+    
+    // Add throbbing animation after a short delay
+    setTimeout(() => {
+      console.log('Attempting to add throbbing animation...');
+      console.log('Reduced motion:', reduceMotion);
+      console.log('Target dots:', targetDots);
+      
+      if (!reduceMotion) {
+        // Tooltip prompts for each dot
+        const tooltipPrompts = [
+          "Build a team to run my SaaS",
+          "Create an app for driving instructors", 
+          "I need a crew for my marketing campaign",
+          "Develop a platform for remote teams",
+          "Launch an e-commerce solution",
+          "Design a workflow automation system"
+        ];
+
+        (targetDots || []).forEach((d, i) => {
+          d.classList.add('throbbing');
+          
+          // Create tooltip element
+          const tooltip = document.createElement('div');
+          tooltip.className = 'hex-tooltip';
+          tooltip.textContent = tooltipPrompts[i] || "Let's build something amazing";
+          document.body.appendChild(tooltip);
+          
+          // Add hover event listeners
+          const showTooltip = (e) => {
+            const rect = d.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + rect.width / 2}px`;
+            tooltip.style.top = `${rect.top + window.scrollY}px`;
+            tooltip.classList.add('visible');
+          };
+          
+          const hideTooltip = () => {
+            tooltip.classList.remove('visible');
+          };
+          
+          d.addEventListener('mouseenter', showTooltip);
+          d.addEventListener('mouseleave', hideTooltip);
+          d.addEventListener('focus', showTooltip);
+          d.addEventListener('blur', hideTooltip);
+          
+          // Store tooltip reference for cleanup
+          d._tooltip = tooltip;
+          
+          // Create efficient but visible throbbing animation
+          let frame = 0;
+          const maxFrames = 120; // 2 seconds at 60fps
+          
+          const throb = () => {
+            frame = (frame + 1) % maxFrames;
+            
+            // Use sine wave for smooth animation - much more efficient
+            const progress = Math.sin((frame / maxFrames) * Math.PI * 2);
+            const scale = 1.5 + (progress * 1.0); // 1.5 to 2.5
+            const glowSize = 8 + (Math.abs(progress) * 12); // 8 to 20px (reduced radius)
+            const brightness = 1 + (Math.abs(progress) * 2); // 1 to 3 opacity for brightness
+            
+            // Apply efficient transform and brighter, smaller glow
+            d.style.transform = `scale(${scale})`;
+            d.style.filter = `url(#dotGlow) drop-shadow(0 0 ${glowSize}px rgba(255, 255, 255, ${brightness}))`;
+            d.style.opacity = '1';
+            d.style.transformOrigin = 'center';
+            
+            // Throttle to 30fps instead of 60fps to reduce load
+            setTimeout(() => requestAnimationFrame(throb), 33);
+          };
+          
+          // Start the efficient animation
+          throb();
+          
+          console.log(`Added efficient throbbing to dot ${i}:`, d.classList.toString());
+        });
+        console.log(`Total throbbing dots: ${targetDots ? targetDots.length : 0}`);
+      } else {
+        console.log('Throbbing disabled due to reduced motion preference');
+      }
+    }, 500); // Small delay before throbbing starts
   }, reduceMotion ? 0 : (maxEnd + 60));
 })();

@@ -107,62 +107,27 @@
       vector-effect: non-scaling-stroke;
       stroke-linejoin: round;
       stroke-linecap: round;
-      filter: url(#glow);
       pointer-events: none;
     }
     
     .dot {
       fill: var(--dot-color, rgba(52, 76, 95, 1));
-      filter: none;
-      opacity: 0;
+      opacity: 1;
       transform-box: fill-box;
       transform-origin: 50% 50%;
-      transform: scale(.7);
+      transform: scale(.8);
       pointer-events: none;
     }
     
     .dot.interactive {
       pointer-events: auto;
       cursor: pointer;
-      will-change: transform, filter, opacity;
-      transition: transform 160ms cubic-bezier(.2,.6,.2,1) !important, opacity 140ms ease !important, filter 160ms ease !important;
-      stroke: rgba(255,255,255,0);
-      stroke-width: 16;
-      pointer-events: all;
+      stroke: none;
+      stroke-width: 0;
       touch-action: none;
     }
     
-    .dot.interactive:nth-child(1) { animation: throb1 6s ease-in-out infinite !important; }
-    .dot.interactive:nth-child(2) { animation: throb2 6s ease-in-out infinite !important; }
-    .dot.interactive:nth-child(3) { animation: throb3 6s ease-in-out infinite !important; }
-    .dot.interactive:nth-child(4) { animation: throb4 6s ease-in-out infinite !important; }
-    .dot.interactive:nth-child(5) { animation: throb5 6s ease-in-out infinite !important; }
-    .dot.interactive:nth-child(6) { animation: throb6 6s ease-in-out infinite !important; }
-    
-    @keyframes throb1 {
-      0%, 16.67%, 100% { filter: none !important; transform: scale(1) !important; }
-      8.33% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
-    @keyframes throb2 {
-      16.67%, 33.33%, 100% { filter: none !important; transform: scale(1) !important; }
-      25% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
-    @keyframes throb3 {
-      33.33%, 50%, 100% { filter: none !important; transform: scale(1) !important; }
-      41.67% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
-    @keyframes throb4 {
-      50%, 66.67%, 100% { filter: none !important; transform: scale(1) !important; }
-      58.33% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
-    @keyframes throb5 {
-      66.67%, 83.33%, 100% { filter: none !important; transform: scale(1) !important; }
-      75% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
-    @keyframes throb6 {
-      83.33%, 100% { filter: none !important; transform: scale(1) !important; }
-      91.67% { filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.8)) !important; transform: scale(1.2) !important; --dot-color: rgba(255, 255, 255, 1) !important; }
-    }
+
     
     .dot.interactive:hover, .dot.interactive:focus-visible {
       transform: scale(10);
@@ -174,12 +139,41 @@
       transform: scale(9.4);
     }
     
+
+    
     .ring {
       fill: none;
       stroke: rgba(255,255,255,0.85);
       stroke-width: 0.8;
       opacity: 0;
       pointer-events: none;
+    }
+    
+    /* Hover tooltip styling */
+    .hex-tooltip {
+      position: absolute;
+      background: rgba(8, 8, 8, 0.9);
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateX(-50%) translateY(-50px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      z-index: 1000;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    }
+    
+    .hex-tooltip.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-60px);
     }
     
     .edge {

@@ -164,5 +164,3 @@
   card.addEventListener('focus', start);
   card.addEventListener('blur', stop);
 })();
-
-

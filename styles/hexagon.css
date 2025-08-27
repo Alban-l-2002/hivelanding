@@ -1,0 +1,129 @@
+/* ====== Hexagon Animation Overlay ====== */
+.hex-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hex-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hex-stage svg {
+  /* Make the hexagon much larger */
+  width: min(90vw, 1800px);
+  height: auto;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
+  opacity: 1; /* Full visibility for brighter dots */
+  transform: translateX(25%) translateY(-10%); /* Move 25% to the right and 10% up */
+}
+
+/* Hexagon animation styles */
+.hex {
+  fill: none;
+  stroke: rgba(52, 76, 95, 0.8);
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.dot {
+  fill: var(--dot-color, rgba(52, 76, 95, 1));
+  opacity: 1;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  transform: scale(1);
+  pointer-events: none;
+}
+
+.dot.interactive {
+  pointer-events: auto;
+  cursor: pointer;
+  stroke: none;
+  stroke-width: 0;
+  touch-action: none;
+}
+
+.dot.interactive:hover, 
+.dot.interactive:focus-visible {
+  transform: scale(10);
+  opacity: 1;
+  filter: url(#dotGlowUltra);
+}
+
+.dot.interactive:active {
+  transform: scale(9.4);
+}
+
+.ring {
+  fill: none;
+  stroke: rgba(255,255,255,0.85);
+  stroke-width: 0.8;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hover tooltip styling */
+.hex-tooltip {
+  position: absolute;
+  background: rgba(8, 8, 8, 0.9);
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-family: 'Space Grotesk', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-50%) translateY(-50px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 1000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+.hex-tooltip.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-60px);
+}
+
+.edge {
+  stroke: rgba(52, 76, 95, 0.8);
+  stroke-width: 0.6;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+/* Reduced motion for hexagon animation */
+@media (prefers-reduced-motion: reduce) {
+  .hex, .dot, .edge, .ring {
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+  .hex-overlay { 
+    display: none; 
+  }
+}

@@ -1,0 +1,252 @@
+/* ====== Waitlist form ====== */
+.waitlist { 
+  display: flex; 
+  gap: 10px; 
+  align-items: center; 
+  flex-wrap: wrap; 
+}
+
+.input { 
+  flex: 1 1 280px; 
+  background: rgba(255,255,255,0.06); 
+  border: 1px solid rgba(255,255,255,0.16); 
+  color: #e8eef9; 
+  border-radius: 12px; 
+  padding: 12px 14px; 
+  font-size: 14.5px; 
+  outline: none; 
+}
+
+.input::placeholder { 
+  color: #9fb2c7; 
+}
+
+.primary { 
+  appearance: none; 
+  background: transparent; 
+  color: #e8eef9; 
+  border: 1px solid rgba(255,255,255,0.20); 
+  border-radius: 999px; 
+  padding: 12px 18px; 
+  font-weight: 800; 
+  letter-spacing: .3px; 
+  cursor: pointer; 
+  box-shadow: none; 
+  font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; 
+  text-transform: uppercase; 
+  transition: background .2s ease, border-color .2s ease, transform .2s ease; 
+}
+
+.secondary { 
+  appearance: none; 
+  background: transparent; 
+  color: #e8eef9; 
+  border: 1px solid rgba(255,255,255,0.20); 
+  border-radius: 999px; 
+  padding: 12px 16px; 
+  font-weight: 800; 
+  letter-spacing: .3px; 
+  cursor: pointer; 
+  box-shadow: none; 
+  font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; 
+  text-transform: uppercase; 
+  transition: background .2s ease, border-color .2s ease, transform .2s ease; 
+}
+
+.form-note { 
+  font-size: 12.5px; 
+  color: #8ea0b7; 
+  margin-left: 4px; 
+}
+
+.status { 
+  font-size: 14px; 
+  margin-top: 8px; 
+  min-height: 1.2em; 
+}
+
+.status[data-ok="1"] { 
+  color: #9be7a5; 
+}
+
+.status[data-ok="0"] { 
+  color: #ff9b9b; 
+}
+
+.primary:hover, 
+.secondary:hover, 
+.cta-discord:hover { 
+  background: rgba(255,255,255,0.06); 
+  transform: translateY(-1px); 
+}
+
+/* ====== Component Panels ====== */
+.panel {
+  position: relative;
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-left: 2px solid rgba(255,255,255,0.15);
+  border-radius: 0;
+  padding: 22px 22px 18px; 
+  min-height: 420px;
+  overflow: hidden;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.panel:hover {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.22);
+  border-left: 2px solid rgba(255,255,255,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+  transform: translateY(-2px);
+}
+
+.stage { 
+  height: 260px; 
+  background: radial-gradient(600px 200px at 50% -100px, rgba(255,255,255,0.06), rgba(0,0,0,0)); 
+  border-radius: 0; 
+}
+
+.title { 
+  font-weight: 750; 
+  font-size: 22px; 
+  letter-spacing: .2px; 
+  margin: 10px 2px 6px; 
+  color: #e8eef9; 
+}
+
+.desc { 
+  margin: 0 2px 16px; 
+  color: #9fb2c7; 
+  line-height: 1.6; 
+  font-size: 14.5px; 
+  max-width: 50ch; 
+}
+
+.actions { 
+  display: flex; 
+  gap: 12px; 
+  align-items: center; 
+  margin-top: auto; 
+}
+
+.ghost { 
+  appearance: none; 
+  background: transparent; 
+  color: #e8eef9; 
+  border: 1px solid rgba(255,255,255,0.20); 
+  border-radius: 999px; 
+  padding: 10px 14px; 
+  font-weight: 800; 
+  letter-spacing: .3px; 
+  cursor: pointer; 
+  transition: background .2s ease, border-color .2s ease, transform .2s ease; 
+  font-size: 13px; 
+  box-shadow: none; 
+  font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; 
+  text-transform: uppercase; 
+}
+
+.ghost:hover { 
+  background: rgba(255,255,255,0.06); 
+  transform: translateY(-1px); 
+}
+
+.dag-demo { 
+  height: 260px; 
+  margin: 0; 
+  text-align: left; 
+  display: flex; 
+}
+
+.dag-stage { 
+  height: 100%; 
+  width: 100%; 
+  border-radius: 0; 
+  background: radial-gradient(600px 200px at 50% -100px, rgba(255,255,255,0.06), rgba(0,0,0,0)); 
+}
+
+.dag .square { 
+  fill: #e9eef7; 
+  rx: 3; 
+  ry: 3; 
+  transition: fill .25s ease, transform .25s ease, filter .25s ease; 
+}
+
+.dag .square.is-highlight { 
+  fill: #ffd479; 
+  transform: scale(1.25); 
+  filter: drop-shadow(0 0 12px rgba(255,212,121,0.55)); 
+}
+
+.dag .edge { 
+  stroke: #ffffff; 
+  stroke-opacity: 0.9; 
+  stroke-width: 4; 
+  stroke-linecap: round; 
+}
+
+.label text { 
+  fill: #e9eef7; 
+  font-weight: 700; 
+  font-size: 14px; 
+  letter-spacing: .2px; 
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; 
+}
+
+.label rect { 
+  fill: rgba(0,0,0,0.55); 
+  stroke: rgba(255,255,255,0.25); 
+  stroke-width: 1; 
+  rx: 8; 
+}
+
+/* SVG styling (weave animations) */
+.trail { 
+  fill: none; 
+  stroke: #e9eef7; 
+  stroke-opacity: .9; 
+  stroke-width: 4; 
+  stroke-linecap: round; 
+  stroke-linejoin: round; 
+}
+
+.square { 
+  fill: #e9eef7; 
+  rx: 4; 
+  ry: 4; 
+}
+
+/* ====== Discord strip ====== */
+.discord {
+  margin-top: 8px;
+  display: flex; 
+  flex-wrap: wrap; 
+  gap: 12px; 
+  align-items: center;
+  background: linear-gradient(90deg, rgba(88,101,242,.12), rgba(88,101,242,.04));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px; 
+  padding: 14px 16px;
+}
+
+.cta-discord { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px; 
+  text-decoration: none; 
+  font-weight: 800; 
+  letter-spacing: .3px; 
+  background: transparent; 
+  color: #e8eef9; 
+  border: 1px solid rgba(255,255,255,0.20); 
+  border-radius: 999px; 
+  padding: 10px 14px; 
+  box-shadow: none; 
+  font-family: 'Space Grotesk','Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; 
+  text-transform: uppercase; 
+  transition: background .2s ease, border-color .2s ease, transform .2s ease; 
+}

@@ -113,7 +113,7 @@
     <section class="page interactive" id="ideaPage" style="height: 1000vh; background: #0b0b0b;">
       <div class="stage" id="stage" aria-label="Scroll to animate" style="position: sticky; top: 0; height: 100vh; overflow: visible; touch-action: auto; cursor: default; transform: translateZ(0); will-change: transform;">
         <div class="pin" style="position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate;">
-          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(40px, 8vw, 140px); transform-origin: top left; will-change: transform;">
+          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(56px, 8vw, 156px); transform-origin: top left; will-change: transform;">
             <div class="ideaWrap" style="position: relative; display: inline-block;">
               <div id="idea" style="position: relative; color: #c7d2e1; font-weight: 800; line-height: 1; font-size: clamp(20px, 5.5vw, 70px); user-select: none; text-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(70, 110, 150, 0.15);">
                 <span class="word" style="letter-spacing: 0.35em;">THE IDEA</span>
@@ -450,7 +450,7 @@
       function easeInOutCubic(u){ return u<0.5 ? 4*u*u*u : 1 - Math.pow(-2*u+2,3)/2; }
       function readPxVar(name, fallback){ const val=getComputedStyle(document.documentElement).getPropertyValue(name).trim(); const num=parseFloat(val); return Number.isFinite(num)?num:fallback; }
       function readPadPx() { return readPxVar('--pad', 20); }
-      function readFinalLeftPx() { return readPxVar('--final-left', 64); }
+      function readFinalLeftPx() { return readPxVar('--final-left', 140); }
 
       function measureIdeaSize() {
         const prevHero = hero.style.transform; const prevIdea = idea.style.transform;

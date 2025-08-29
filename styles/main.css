@@ -2,6 +2,25 @@
 :root { 
   color-scheme: dark; 
   --stage-h: 260px; 
+  
+  /* Scroll animation variables */
+  --pad: clamp(16px, 2vw, 28px);
+  --final-left: clamp(40px, 8vw, 140px);
+  --bg: #0b0b0b;
+  --fg: #f5f5f5;
+  --title: #c7d2e1;
+  --bee-w: clamp(64px, 8vw, 140px);
+  --bee-h: calc(var(--bee-w) * 0.66);
+  --bee-gap: clamp(8px, 1.6vw, 20px);
+  --bee-end-right: clamp(40px, 6vw, 120px);
+  --bee-end-top: clamp(32px, 6vh, 120px);
+  --title-gap: clamp(24px, 3vw, 72px);
+  --bee-title-gap: clamp(10px, 1vw, 20px);
+  --lead-gap: clamp(16px, 2vh, 32px);
+  --lead-max: clamp(420px, 60vw, 900px);
+  --bee-lead-gap: clamp(12px, 1.2vw, 24px);
+  --para-gap: clamp(12px, 2vh, 24px);
+  --idea-stage: 1000vh;
 }
 
 html, body { 
@@ -38,4 +57,17 @@ a:focus-visible {
   .cta, .primary, .secondary { 
     transition: none !important; 
   }
+}
+
+/* ====== Scroll animation styles ====== */
+#idea::before { 
+  content: '['; 
+  margin-right: 0.6ch; 
+  opacity: 0.9; 
+}
+
+#idea::after { 
+  content: ']'; 
+  margin-left: 0.6ch;  
+  opacity: 0.9; 
 }

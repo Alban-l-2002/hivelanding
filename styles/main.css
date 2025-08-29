@@ -4,7 +4,7 @@
   --stage-h: 260px; 
   
   /* Scroll animation variables */
-  --pad: clamp(16px, 2vw, 28px);
+  --pad: clamp(80px, 8vh, 120px);
   --final-left: clamp(40px, 8vw, 140px);
   --bg: #0b0b0b;
   --fg: #f5f5f5;

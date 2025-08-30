@@ -502,16 +502,19 @@
         const end = start + pageIdea.offsetHeight - vh;
         const y = window.scrollY || document.documentElement.scrollTop || 0;
         
-        // Add buffer: animation starts after 20% of section height
-        const bufferAmount = 0.2; // 20% buffer
+        // Add buffers: animation starts after 20% and ends before 20% of section height
+        const startBufferAmount = 0.2; // 20% buffer before animation
+        const endBufferAmount = 0.2;   // 20% buffer after animation
         const sectionHeight = pageIdea.offsetHeight;
-        const animationStart = start + (sectionHeight * bufferAmount);
-        const animationEnd = end;
+        const animationStart = start + (sectionHeight * startBufferAmount);
+        const animationEnd = start + sectionHeight - (sectionHeight * endBufferAmount) - vh;
         
-        // Calculate progress only after buffer
+        // Calculate progress only during animation window
         let p = 0;
-        if (y >= animationStart) {
+        if (y >= animationStart && y <= animationEnd) {
           p = clamp((y - animationStart) / (animationEnd - animationStart), 0, 1);
+        } else if (y > animationEnd) {
+          p = 1; // Keep at final state during end buffer
         }
         
         renderAtProgress(p);

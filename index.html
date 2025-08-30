@@ -45,6 +45,10 @@
     <section class="hero" aria-labelledby="hero-title">
       <div class="shell hero-wrap">
       </div>
+      
+      <!-- Stars background for hero section -->
+      <canvas id="heroStars" style="position: absolute; inset: 0; pointer-events: none; z-index: 1; display: block;"></canvas>
+      
       <div class="hero-content">
         <h1 id="hero-title" class="hero-title" style="font-size: clamp(20px, 4.5vw, 60px);">Harness your hive of AI agents</h1>
         <p class="hero-subtitle">Hive AI is your ecosystem — a hive of intelligent agents built to collaborate, automate, and accelerate, turning ambitious ideas into reality while you focus on what truly matters.</p>
@@ -59,7 +63,7 @@
       </div>
       
       <!-- Hexagon Animation Overlay -->
-      <div class="hex-overlay">
+      <div class="hex-overlay" style="z-index: 2;">
         <div class="hex-stage">
           <svg viewBox="0 0 1200 840" role="img" aria-label="Side-joined hex cluster with radial fade">
             <defs>
@@ -110,32 +114,19 @@
     </section>
 
     <!-- ====== Interactive Scroll Animation Section ====== -->
-    <section class="page interactive" id="ideaPage" style="height: 1000vh; background: #0b0b0b;">
-      <div class="stage" id="stage" aria-label="Scroll to animate" style="position: sticky; top: 0; height: 100vh; overflow: visible; touch-action: auto; cursor: default; transform: translateZ(0); will-change: transform;">
-        <div class="pin" style="position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate;">
-          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(56px, 8vw, 156px); transform-origin: top left; will-change: transform;">
+    <section class="page interactive" id="ideaPage" style="height: 300vh; background: transparent; position: relative;">
+      <div class="stage" id="stage" aria-label="Scroll to animate" style="position: sticky; top: 0; height: 100vh; overflow: visible; touch-action: auto; cursor: default; transform: translateZ(0); will-change: transform; z-index: 1;">
+        <!-- Background canvas stuck to the sticky container -->
+        <canvas id="stars" style="position: absolute; inset: 0; pointer-events: none; z-index: 0; display: block;"></canvas>
+        
+        <div class="pin" style="position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; z-index: 2;">
+          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(40px, 8vw, 140px); transform-origin: top left; will-change: transform; z-index: 3;">
             <div class="ideaWrap" style="position: relative; display: inline-block;">
               <div id="idea" style="position: relative; color: #c7d2e1; font-weight: 800; line-height: 1; font-size: clamp(20px, 5.5vw, 70px); user-select: none; text-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(70, 110, 150, 0.15);">
                 <span class="word" style="letter-spacing: 0.35em;">THE IDEA</span>
               </div>
             </div>
           </div>
-          
-          <h1 id="heroTitle" class="hero-title" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; pointer-events: none; font-family: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(24px, 4vw, 60px); font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; margin: 0; line-height: 0.85; background: linear-gradient(180deg, #e8eef9 0%, #b4a08a 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">UNDERSTANDING HIVE AI</h1>
-          
-          <p id="heroLead" class="hero-lead" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; max-width: clamp(420px, 60vw, 900px); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(16px, 2.2vw, 28px); font-weight: 600; line-height: 1.45; color: rgba(226, 232, 240, 0.9); margin: 0;">Hive AI is built on a simple but powerful vision: what if AI could work together like a hive?</p>
-          
-          <p class="hero-copy" id="copy1" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; max-width: clamp(420px, 60vw, 900px); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(14px, 1.8vw, 22px); font-weight: 500; line-height: 1.65; color: rgba(210, 220, 233, 0.88); margin: 0;">In nature, hives are living ecosystems where every bee has a role, yet all move in harmony towards one shared goal. Communication is constant, coordination is seamless, and the collective achieves what no single bee could do alone.</p>
-          
-          <p class="hero-copy" id="copy2" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; max-width: clamp(420px, 60vw, 900px); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(14px, 1.8vw, 22px); font-weight: 500; line-height: 1.65; color: rgba(210, 220, 233, 0.88); margin: 0;">Hive AI brings this idea into the digital world. Instead of one AI working in isolation, you get an ecosystem of intelligent agents that share knowledge, adapt to one another, and collaborate to move your project forward.</p>
-          
-          <p class="hero-copy" id="copy3" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; max-width: clamp(420px, 60vw, 900px); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(14px, 1.8vw, 22px); font-weight: 500; line-height: 1.65; color: rgba(210, 220, 233, 0.88); margin: 0;">It's not just AI automation—it's AI teamwork, a swarm of specialised agents thinking, building, and refining together until your goal is reached.</p>
-          
-          <p class="hero-copy" id="copy4" style="position: absolute; left: clamp(40px, 8vw, 140px); top: clamp(80px, 8vh, 120px); opacity: 0; will-change: transform, opacity; max-width: clamp(420px, 60vw, 900px); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; font-size: clamp(14px, 1.8vw, 22px); font-weight: 500; line-height: 1.65; color: rgba(210, 220, 233, 0.88); margin: 0;"><em>With Hive AI, you're not managing tools—you're leading a hive.</em></p>
-          
-          <canvas id="hexbee" style="position: absolute; left: 0; top: clamp(80px, 8vh, 120px); width: clamp(64px, 8vw, 140px); height: calc(clamp(64px, 8vw, 140px) * 0.66); pointer-events: none; filter: drop-shadow(0 6px 18px rgba(255,255,255,.12)); z-index: 3;"></canvas>
-          
-
         </div>
       </div>
     </section>
@@ -419,37 +410,24 @@
   
   <!-- Scroll-driven animation script -->
   <script>
-    // ---------- Scroll-driven multi-phase hero (pinned to section; persists when leaving) ----------
     (function () {
       const hero = document.getElementById('hero');
       const idea = document.getElementById('idea');
-      const stage = document.getElementById('stage');
-      
-      const bee = document.getElementById('hexbee');
-      const heroTitle = document.getElementById('heroTitle');
-      const heroLead = document.getElementById('heroLead');
-      const copyEls = Array.from(document.querySelectorAll('.hero-copy'));
-      const pageIdea  = document.getElementById('ideaPage');
+      const pageIdea = document.getElementById('ideaPage');
 
-      // Timeline lengths
-      const blocks = [heroLead, ...copyEls];
-      const totalLen = 2 + blocks.length; // phase1 + phase2 + blocks
+      const starsCanvas = document.getElementById('stars');
+      const starsCtx = starsCanvas.getContext('2d');
+      const heroStarsCanvas = document.getElementById('heroStars');
+      const heroStarsCtx = heroStarsCanvas.getContext('2d');
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      // Start & end scales for the IDEA
-      const s0 = 1.0;   // centered
-      const s1 = 0.175; // final top-left
-
-      // Layout numbers
+      // Animation: center -> top-left (exact same logic as the reference)
+      const s0 = 1.0, s1 = 0.175;
       let x0 = 0, y0 = 0, topPad = 0, leftPad = 0;
-      let beeHalfW = 0, beeHalfH = 0, beeGapPx = 12;
-      let beePhase1 = { p0:{x:0,y:0}, p1:{x:0,y:0}, p2:{x:0,y:0} };
-      const beeSegs = [];
 
       function clamp(v, min, max) { return v < min ? min : (v > max ? max : v); }
-      const lerp = (a,b,u)=>a+(b-a)*u;
-      function easeInOutCubic(u){ return u<0.5 ? 4*u*u*u : 1 - Math.pow(-2*u+2,3)/2; }
       function readPxVar(name, fallback){ const val=getComputedStyle(document.documentElement).getPropertyValue(name).trim(); const num=parseFloat(val); return Number.isFinite(num)?num:fallback; }
-      function readPadPx() { return readPxVar('--pad', 20); }
+      function readPadPx() { return readPxVar('--pad', 120); }
       function readFinalLeftPx() { return readPxVar('--final-left', 140); }
 
       function measureIdeaSize() {
@@ -461,11 +439,10 @@
       }
 
       function computeOffsets() {
-        const docEl = document.documentElement;
-        const vw = docEl.clientWidth || window.innerWidth;  // exclude scrollbar width for perfect centering
-        const vh = docEl.clientHeight || window.innerHeight; // exclude horizontal scrollbar if any
-        topPad = readPadPx();
-        leftPad = readFinalLeftPx();
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        topPad = Math.max(80, Math.min(120, vh * 0.08)); // clamp(80px, 8vh, 120px)
+        leftPad = Math.max(40, Math.min(140, vw * 0.08)); // clamp(40px, 8vw, 140px)
         const { w, h } = measureIdeaSize();
         const targetW = w * s0;
         const targetH = h * s0;
@@ -473,246 +450,149 @@
         y0 = ((vh - targetH) / 2) - topPad;
       }
 
-      function computeTitlePos(){ const gap = readPxVar('--title-gap', 12); const { h } = measureIdeaSize(); return { x: leftPad, y: topPad + h * s1 + gap }; }
-
-      const blockPos = [];
-      function computeBlockPositions(){
-        blockPos.length = 0;
-        const titlePos = computeTitlePos();
-        const titleH = heroTitle.getBoundingClientRect().height;
-        const leadGap = readPxVar('--lead-gap', 24);
-        const paraGap = readPxVar('--para-gap', 16);
-        let cursorY = titlePos.y + titleH + leadGap; // lead position
-        blockPos.push({ x: leftPad, y: cursorY });
-        cursorY += blocks[0].getBoundingClientRect().height + paraGap;
-        for (let i=1;i<blocks.length;i++){
-          blockPos.push({ x: leftPad, y: cursorY });
-          cursorY += blocks[i].getBoundingClientRect().height + paraGap;
-        }
-      }
-
-      function computeBeePaths(){
-        beeSegs.length = 0;
-        beeGapPx = readPxVar('--bee-gap', 12);
-        const br = bee.getBoundingClientRect(); beeHalfW = br.width/2; beeHalfH = br.height/2;
-        const ideaSize = measureIdeaSize();
-        const ideaLeft0 = leftPad + x0; const ideaTop0 = topPad + y0;
-        const ideaCenterX0 = ideaLeft0 + (ideaSize.w * s0)/2; const ideaTopEdge0 = ideaTop0;
-        beePhase1.p0.x = ideaCenterX0; beePhase1.p0.y = ideaTopEdge0 - beeGapPx - beeHalfH;
-        const titleRect = heroTitle.getBoundingClientRect(); const titlePos = computeTitlePos();
-        const beeTitleGap = readPxVar('--bee-title-gap', 16);
-        const endLeft = titlePos.x + titleRect.width + beeTitleGap; const endTop  = titlePos.y + titleRect.height / 2;
-        beePhase1.p2.x = endLeft + beeHalfW; beePhase1.p2.y = endTop;
-        const lift1 = Math.min(window.innerHeight * 0.15, 140);
-        beePhase1.p1.x = lerp(beePhase1.p0.x, beePhase1.p2.x, 0.5);
-        beePhase1.p1.y = Math.min(beePhase1.p0.y, beePhase1.p2.y) - lift1;
-
-        const beeLeadGap = readPxVar('--bee-lead-gap', 16);
-        let startX = beePhase1.p2.x, startY = beePhase1.p2.y;
-        for (let i=0;i<blocks.length;i++){
-          const el = blocks[i]; const rect = el.getBoundingClientRect(); const pos = blockPos[i];
-          const xR = pos.x + rect.width + beeLeadGap + beeHalfW; // to right of block
-          const h = rect.height; const curveX = Math.min(60, Math.max(24, h * 0.15)); const curveY = Math.min(100, Math.max(40, h * 0.25));
-          beeSegs.push({ q0: { x: startX, y: startY }, q1: { x: xR + curveX, y: pos.y - curveY }, q2: { x: xR + curveX, y: pos.y + h + curveY }, q3: { x: xR, y: pos.y + h * 0.5 } });
-          startX = xR; startY = pos.y + h * 0.5;
-        }
-      }
-
-      function placeBeePhase1(u){ const e = easeInOutCubic(u); const om = (1-e); const x = om*om*beePhase1.p0.x + 2*om*e*beePhase1.p1.x + e*e*beePhase1.p2.x; const y = om*om*beePhase1.p0.y + 2*om*e*beePhase1.p1.y + e*e*beePhase1.p2.y; bee.style.transform = `translate3d(${x - beeHalfW}px, ${y - beeHalfH}px, 0)`; }
-      function placeBeeOnCubic(seg, u){ const e = easeInOutCubic(u); const om = 1 - e; const x = om*om*om*seg.q0.x + 3*om*om*e*seg.q1.x + 3*om*e*e*seg.q2.x + e*e*e*seg.q3.x; const y = om*om*om*seg.q0.y + 3*om*om*e*seg.q1.y + 3*om*e*e*seg.q2.y + e*e*e*seg.q3.y; bee.style.transform = `translate3d(${x - beeHalfW}px, ${y - beeHalfH}px, 0)`; }
-
       function renderAtProgress(p){
-        // p in [0,1] across the whole long section
-        const t = p * totalLen;
-        const t1 = clamp(t, 0, 1);       // phase 1
-        const t2 = clamp(t - 1, 0, 1);   // phase 2
-
-        // Phase 1: idea + bee to title
-        const scale = s0 + (s1 - s0) * t1;
-        const tx = x0 * (1 - t1);
-        const ty = y0 * (1 - t1);
+        const scale = s0 + (s1 - s0) * p;
+        const tx = x0 * (1 - p);
+        const ty = y0 * (1 - p);
         hero.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${scale})`;
-        if (t < 1)      placeBeePhase1(t1);
-        else if (t < 2) placeBeePhase1(1);
-
-        // Phase 2: title fade-in and slight lift
-        const titlePos = computeTitlePos();
-        const e2 = easeInOutCubic(t2);
-        const lift2 = (1 - e2) * 12;
-        heroTitle.style.transform = `translate3d(0px, ${titlePos.y + lift2}px, 0)`;
-        heroTitle.style.opacity = e2.toFixed(3);
-
-        // Phases 3..N: each block fades in and fixes into place
-        for (let i=0;i<blocks.length;i++){
-          const ti = clamp(t - (2 + i), 0, 1);
-          const ei = easeInOutCubic(ti);
-          const lift = (1 - ei) * 16;
-          const pos = blockPos[i];
-          blocks[i].style.transform = `translate3d(0px, ${pos.y + lift}px, 0)`;
-          blocks[i].style.opacity = ei.toFixed(3);
-        }
-
-        // Bee follows cubic segments once we enter blocks timeline
-        if (t >= 2){
-          const idx = Math.min(Math.floor(t - 2), beeSegs.length - 1);
-          const u = clamp((t - 2) - idx, 0, 1);
-          placeBeeOnCubic(beeSegs[idx], u);
-        }
-
-        // IMPORTANT: no fade-out at the end. Elements remain visible at 100% progress
-        // and because they're inside the sticky pin, they persist in the section and
-        // are still there when you scroll back up.
-
-        
       }
 
       function handleScroll(){
         const vh = window.innerHeight;
         const start = pageIdea.offsetTop;
-        const end = start + pageIdea.offsetHeight - vh; // last moment before unpin
+        const end = start + pageIdea.offsetHeight - vh;
         const y = window.scrollY || document.documentElement.scrollTop || 0;
         const p = clamp((y - start) / (end - start), 0, 1);
         renderAtProgress(p);
       }
 
-      function reflow(){ computeOffsets(); computeBlockPositions(); computeBeePaths(); handleScroll(); }
+      function reflow(){
+        resizeStars(true);
+        computeOffsets();
+        handleScroll();
+      }
 
       window.addEventListener('scroll', handleScroll, { passive: true });
       window.addEventListener('resize', reflow, { passive: true });
 
-      // Initial layout
-      reflow();
-    })();
+      // ------------------ Stars + Top Rings (fixed canvas) ------------------
+      const layers = [
+        { count: 280, speed: 3,  size:[0.2,0.8], tw:[0.6,1.0], dots: [] },
+        { count: 360, speed: 6,  size:[0.1,0.6], tw:[0.4,0.9], dots: [] },
+        { count: 440, speed: 10, size:[0.1,0.4], tw:[0.3,0.8], dots: [] },
+      ];
+      const heroLayers = [
+        { count: 280, speed: 3,  size:[0.2,0.8], tw:[0.6,1.0], dots: [] },
+        { count: 360, speed: 6,  size:[0.1,0.6], tw:[0.4,0.9], dots: [] },
+        { count: 440, speed: 10, size:[0.1,0.4], tw:[0.3,0.8], dots: [] },
+      ];
+      function rand(a,b){ return a + Math.random()*(b-a); }
 
-    // ---------- HexBee canvas animation ----------
-    (function(){
-      const canvas = document.getElementById('hexbee');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-      function resize(){
-        const rect = canvas.getBoundingClientRect();
-        canvas.width  = Math.max(1, Math.floor(rect.width  * dpr));
-        canvas.height = Math.max(1, Math.floor(rect.height * dpr));
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      const BEE_R = 10, TRAIL_MAX = 120, EMIT_INTERVAL = 0.12;
-      const trail = []; 
-      let emitTimer = 0;
-
-      function drawHex(x,y,r,rot=0,fill='#fff',stroke='rgba(255,255,255,.85)',glow=.9){
-        const a = Math.PI/3; 
-        ctx.save(); 
-        ctx.translate(x,y); 
-        ctx.rotate(rot);
-        if (glow>0){ 
-          const g=ctx.createRadialGradient(0,0,r*.2,0,0,r*1.5); 
-          g.addColorStop(0,`rgba(255,255,255,${.9*glow})`); 
-          g.addColorStop(1,'rgba(255,255,255,0)'); 
-          ctx.fillStyle=g; 
-          ctx.beginPath(); 
-          ctx.arc(0,0,r*1.5,0,Math.PI*2); 
-          ctx.fill(); 
-        }
-        ctx.beginPath(); 
-        for(let i=0;i<6;i++){ 
-          const px=r*Math.cos(a*i), py=r*Math.sin(a*i); 
-          i?ctx.lineTo(px,py):ctx.moveTo(px,py);
-        } 
-        ctx.closePath(); 
-        ctx.fillStyle=fill; 
-        ctx.fill(); 
-        ctx.lineWidth=1.5; 
-        ctx.strokeStyle=stroke; 
-        ctx.stroke(); 
-        ctx.restore();
-      }
-
-      function drawWing(x,y,side,flap,scale,opacity){
-        ctx.save(); 
-        ctx.globalAlpha=opacity; 
-        ctx.translate(x,y);
-        const sign = side==='right'?1:-1; 
-        if (side==='left') ctx.scale(-1,1);
-        ctx.rotate(sign*(Math.PI/6 + flap)); 
-        ctx.scale(scale,scale);
-        ctx.beginPath(); 
-        const rw=24,rh=12; 
-        ctx.moveTo(0,0); 
-        ctx.quadraticCurveTo(rw*.3,-rh*1.1,rw,0); 
-        ctx.quadraticCurveTo(rw*.3,rh*1.1,0,0); 
-        ctx.closePath();
-        ctx.fillStyle='rgba(255,255,255,.35)'; 
-        ctx.fill(); 
-        ctx.lineWidth=1; 
-        ctx.strokeStyle='rgba(255,255,255,.5)'; 
-        ctx.stroke(); 
-        ctx.restore();
-      }
-
-      function addTrailDot(x,y){ 
-        const r=.9+Math.random()*.6, vy=(Math.random()-.5)*12; 
-        trail.push({x,y,vx:-60,vy,life:0,max:1.6+Math.random()*.6,r}); 
-        if (trail.length>TRAIL_MAX) trail.shift(); 
-      }
-
-      function updateAndDrawTrail(dt){
-        for (let i=trail.length-1;i>=0;i--){
-          const p=trail[i]; 
-          p.life+=dt; 
-          p.x+=p.vx*dt; 
-          p.y+=p.vy*dt;
-          const u=Math.min(1,p.life/p.max), alpha=1-u, halo=p.r*3.5;
-          const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,halo); 
-          g.addColorStop(0,`rgba(255,255,255,${alpha*.25})`); 
-          g.addColorStop(1,'rgba(255,255,255,0)');
-          ctx.fillStyle=g; 
-          ctx.beginPath(); 
-          ctx.arc(p.x,p.y,halo,0,Math.PI*2); 
-          ctx.fill();
-          ctx.fillStyle=`rgba(255,255,255,${alpha})`; 
-          ctx.beginPath(); 
-          ctx.arc(p.x,p.y,p.r,0,Math.PI*2); 
-          ctx.fill();
-          if (u>=1 || p.x<-10) trail.splice(i,1);
+      function resizeStars(seed=false){
+        const w = Math.max(1, Math.floor(window.innerWidth  * dpr));
+        const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+        
+        // Resize both canvases
+        starsCanvas.width  = w;
+        starsCanvas.height = h;
+        starsCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        
+        heroStarsCanvas.width  = w;
+        heroStarsCanvas.height = h;
+        heroStarsCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        
+        if (seed){
+          const vw = w / dpr, vh = h / dpr;
+          // Seed both layer sets
+          for (const L of layers){
+            L.dots = Array.from({length: L.count}).map(()=>({ 
+              x: Math.random()*vw, y: Math.random()*vh, r: rand(...L.size), a: rand(.35,.9), twp: Math.random()*Math.PI*2, tws: rand(.5,1.8)
+            }));
+          }
+          for (const L of heroLayers){
+            L.dots = Array.from({length: L.count}).map(()=>({ 
+              x: Math.random()*vw, y: Math.random()*vh, r: rand(...L.size), a: rand(.35,.9), twp: Math.random()*Math.PI*2, tws: rand(.5,1.8)
+            }));
+          }
         }
       }
 
-      let last=0, wing=0, bob=0;
-      function step(ts){
-        if (!last) last=ts; 
-        const dt=Math.min(.05,(ts-last)/1000); 
-        last=ts;
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        const rect=canvas.getBoundingClientRect(); 
-        const cx=rect.width/2, cy=rect.height/2;
-        wing += dt*13; 
-        bob += dt*2.4; 
-        const bobY = Math.sin(bob)*4;
+      let lastStars=0;
+      function starsLoop(ts){
+        if (!lastStars) lastStars=ts;
+        const dt = Math.min(0.05, (ts-lastStars)/1000);
+        lastStars = ts;
 
-        emitTimer -= dt; 
-        if (emitTimer<=0){ 
-          addTrailDot(cx-BEE_R-4, cy+bobY+(Math.random()-.5)*3); 
-          emitTimer+=EMIT_INTERVAL; 
+        const w = starsCanvas.width / dpr, h = starsCanvas.height / dpr;
+        
+        // Render scrolly section stars
+        starsCtx.clearRect(0,0,w,h);
+        for (const L of layers){
+          for (const s of L.dots){
+            s.twp += dt * s.tws;
+            const tw = 0.65 + Math.sin(s.twp)*0.35;
+            const alpha = s.a * tw;
+            starsCtx.globalAlpha = alpha;
+            starsCtx.beginPath(); starsCtx.arc(s.x, s.y, s.r, 0, Math.PI*2); starsCtx.fillStyle = '#ffffff'; starsCtx.fill();
+            s.x -= L.speed * dt;
+            if (s.x < -2) s.x = w + 2;
+          }
         }
-        updateAndDrawTrail(dt);
+        starsCtx.globalAlpha = 1;
 
-        const flap = Math.sin(wing)*0.6;
-        drawWing(cx-BEE_R*.95, cy+bobY, 'left', flap, 1, 1);
-        drawWing(cx+BEE_R*.95, cy+bobY, 'right', flap, 1, 1);
-        drawHex(cx, cy+bobY, BEE_R, 0);
-        requestAnimationFrame(step);
+        // top-origin rings for scrolly section
+        const cx = w * 0.5, cy = 0;
+        const rings = 6;
+        for (let i=1;i<=rings;i++){
+          const R = (i/rings) * (Math.max(w,h) * 0.9);
+          const g = starsCtx.createRadialGradient(cx, cy, 0, cx, cy, R);
+          const a = 0.10 * (1 - i/rings);
+          g.addColorStop(0, `rgba(120,150,220,${a*0.40})`);
+          g.addColorStop(0.6, `rgba(80,110,180,${a*0.18})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          starsCtx.fillStyle = g;
+          starsCtx.beginPath(); starsCtx.arc(cx, cy, R, 0, Math.PI*2); starsCtx.fill();
+        }
+
+        // Render hero section stars
+        heroStarsCtx.clearRect(0,0,w,h);
+        for (const L of heroLayers){
+          for (const s of L.dots){
+            s.twp += dt * s.tws;
+            const tw = 0.65 + Math.sin(s.twp)*0.35;
+            const alpha = s.a * tw;
+            heroStarsCtx.globalAlpha = alpha;
+            heroStarsCtx.beginPath(); heroStarsCtx.arc(s.x, s.y, s.r, 0, Math.PI*2); heroStarsCtx.fillStyle = '#ffffff'; heroStarsCtx.fill();
+            s.x -= L.speed * dt;
+            if (s.x < -2) s.x = w + 2;
+          }
+        }
+        heroStarsCtx.globalAlpha = 1;
+
+        // top-origin rings for hero section
+        for (let i=1;i<=rings;i++){
+          const R = (i/rings) * (Math.max(w,h) * 0.9);
+          const g = heroStarsCtx.createRadialGradient(cx, cy, 0, cx, cy, R);
+          const a = 0.10 * (1 - i/rings);
+          g.addColorStop(0, `rgba(120,150,220,${a*0.40})`);
+          g.addColorStop(0.6, `rgba(80,110,180,${a*0.18})`);
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          heroStarsCtx.fillStyle = g;
+          heroStarsCtx.beginPath(); heroStarsCtx.arc(cx, cy, R, 0, Math.PI*2); heroStarsCtx.fill();
+        }
+
+        requestAnimationFrame(starsLoop);
       }
 
+      // Boot
       function boot(){ 
-        resize(); 
-        requestAnimationFrame(step); 
+        reflow();
+        requestAnimationFrame(starsLoop);
       }
-      window.addEventListener('resize', resize);
       boot();
     })();
+
+
   </script>
 </body>
 </html>

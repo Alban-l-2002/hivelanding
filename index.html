@@ -24,6 +24,26 @@
   <link rel="stylesheet" href="styles/components.css">
   <link rel="stylesheet" href="styles/footer.css">
 
+  <style>
+    :root { 
+      --edge: #ffffff; 
+      --point: #ffffff; 
+      --core: #d6ecff; 
+    }
+    /* Ultra-light film grain to remove banding */
+    #ideaPage::after { 
+      content: ""; 
+      position: absolute; 
+      inset: 0; 
+      pointer-events: none; 
+      z-index: 5; 
+      opacity: 0.035; 
+      mix-blend-mode: soft-light;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><filter id="n"><feTurbulence baseFrequency="0.9" numOctaves="1"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity="0.8"/></svg>');
+      background-size: 240px 240px; 
+    }
+  </style>
+
 
 </head>
 <body>
@@ -32,7 +52,7 @@
     <div class="shell nav">
       <a class="brand" href="#">Hive AI</a>
       <nav class="links">
-        <a href="#[the idea]-section">Idea</a>
+        <a href="#ideaPage">Idea</a>
         <a href="#capabilities-section">Mission</a>
         <a href="#components-section">Tools</a>
         <a class="cta" href="#join-us-section">Join Us</a>
@@ -119,8 +139,19 @@
         <!-- Background canvas stuck to the sticky container -->
         <canvas id="stars" style="position: absolute; inset: 0; pointer-events: none; z-index: 0; display: block;"></canvas>
         
-        <div class="pin" style="position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; z-index: 2;">
-          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(40px, 8vw, 140px); transform-origin: top left; will-change: transform; z-index: 3;">
+        <!-- Hive model canvas -->
+        <div id="hiveWrap" style="position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; z-index: 1; opacity: 0; will-change: opacity;">
+          <canvas id="hive" style="width: 100%; height: 100%; display: block;"></canvas>
+          <div class="hiveShade" aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; z-index: 2; background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.45) 12%, rgba(0,0,0,0.30) 24%, rgba(0,0,0,0.18) 35%, rgba(0,0,0,0.0) 55%); mix-blend-mode: multiply;"></div>
+          
+          <!-- Hero side text -->
+          <div class="heroText left" style="position: fixed; z-index: 3; pointer-events: none; transform: translateY(-50%); top: 48%; left: clamp(24px, 9vw, 160px); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Noto Sans', sans-serif; font-weight: 300; letter-spacing: -0.02em; line-height: 0.95; font-size: clamp(24px, 5vw, 90px); opacity: 0.88; text-shadow: 0 1px 0 rgba(0,0,0,0.35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-align: left; background-image: linear-gradient(to left, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.25) 18%, rgba(0,0,0,0) 55%), linear-gradient(#cfd3da,#cfd3da); background-blend-mode: multiply, normal;">Understand</div>
+          
+          <div class="heroText right" style="position: fixed; z-index: 3; pointer-events: none; transform: translateY(-50%); top: 52%; right: clamp(24px, 14vw, 240px); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Noto Sans', sans-serif; font-weight: 300; letter-spacing: -0.02em; line-height: 0.95; font-size: clamp(24px, 5vw, 90px); opacity: 0.88; text-shadow: 0 1px 0 rgba(0,0,0,0.35); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; text-align: right; background-image: linear-gradient(to right, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.25) 18%, rgba(0,0,0,0) 55%), linear-gradient(#cfd3da,#cfd3da); background-blend-mode: multiply, normal;">The Hive</div>
+        </div>
+        
+        <div class="pin" style="position: sticky; top: 0; height: 100vh; overflow: hidden; isolation: isolate; z-index: 3;">
+          <div id="hero" style="position: absolute; top: clamp(80px, 8vh, 120px); left: clamp(40px, 8vw, 140px); transform-origin: top left; will-change: transform; z-index: 4;">
             <div class="ideaWrap" style="position: relative; display: inline-block;">
               <div id="idea" style="position: relative; color: #c7d2e1; font-weight: 800; line-height: 1; font-size: clamp(20px, 5.5vw, 70px); user-select: none; text-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 24px rgba(70, 110, 150, 0.15);">
                 <span class="word" style="letter-spacing: 0.35em;">THE IDEA</span>
@@ -455,6 +486,14 @@
         const tx = x0 * (1 - p);
         const ty = y0 * (1 - p);
         hero.style.transform = `translate3d(${tx}px, ${ty}px, 0) scale(${scale})`;
+        
+        // Fade in hive model when "THE IDEA" is halfway to final position
+        const hiveWrap = document.getElementById('hiveWrap');
+        if (hiveWrap) {
+          const fadeStart = 0.5; // Start fading when 50% through animation
+          const hiveOpacity = Math.max(0, Math.min(1, (p - fadeStart) / (1 - fadeStart)));
+          hiveWrap.style.opacity = hiveOpacity.toFixed(3);
+        }
       }
 
       function handleScroll(){
@@ -462,7 +501,19 @@
         const start = pageIdea.offsetTop;
         const end = start + pageIdea.offsetHeight - vh;
         const y = window.scrollY || document.documentElement.scrollTop || 0;
-        const p = clamp((y - start) / (end - start), 0, 1);
+        
+        // Add buffer: animation starts after 20% of section height
+        const bufferAmount = 0.2; // 20% buffer
+        const sectionHeight = pageIdea.offsetHeight;
+        const animationStart = start + (sectionHeight * bufferAmount);
+        const animationEnd = end;
+        
+        // Calculate progress only after buffer
+        let p = 0;
+        if (y >= animationStart) {
+          p = clamp((y - animationStart) / (animationEnd - animationStart), 0, 1);
+        }
+        
         renderAtProgress(p);
       }
 
@@ -584,11 +635,150 @@
         requestAnimationFrame(starsLoop);
       }
 
+            // ------------------ Hive Model (truncated icosahedron) ------------------
+      const hiveCanvas = document.getElementById('hive');
+      const hiveCtx = hiveCanvas.getContext('2d');
+      const hiveDpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      function resizeHive(){
+        const w = Math.max(1, Math.floor(window.innerWidth  * hiveDpr));
+        const h = Math.max(1, Math.floor(window.innerHeight * hiveDpr));
+        hiveCanvas.width  = w;  hiveCanvas.height = h;
+        hiveCtx.setTransform(hiveDpr, 0, 0, hiveDpr, 0, 0);
+      }
+
+      // Geometry build once
+      const phi = (1 + Math.sqrt(5)) / 2;
+      const bases = [[0,1,3*phi],[1,2+phi,2*phi],[phi,2,Math.pow(phi,3)]];
+      const evenPerms = ([a,b,c]) => [[a,b,c],[b,c,a],[c,a,b]];
+      const signCombos = ([x,y,z]) => { const out=[]; for (const sx of [-1,1]) for (const sy of [-1,1]) for (const sz of [-1,1]) out.push([sx*x, sy*y, sz*z]); return out; };
+      const verts = []; const seen=new Set();
+      const key = (v)=>v.map(n=>n.toFixed(6)).join(',');
+      for (const base of bases){ for (const p of evenPerms(base)){ for (const s of signCombos(p)){ const k=key(s); if(!seen.has(k)){ seen.add(k); verts.push(s); } } } }
+      const edges=[]; const targetD2=4, EPS=1e-5;
+      for (let i=0;i<verts.length;i++){ for (let j=i+1;j<verts.length;j++){ const a=verts[i], b=verts[j]; const dx=a[0]-b[0], dy=a[1]-b[1], dz=a[2]-b[2]; const d2=dx*dx+dy*dy+dz*dz; if (Math.abs(d2-targetD2)<EPS) edges.push([i,j]); } }
+
+      // camera / render params
+      let yaw = 0, pitch = 0; // auto-rotation
+      const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let spin = prefersReduce ? 0.0003 : 0.001;
+
+      const DIST = 8; // fixed distance (no zoom)
+      const dist = DIST; const scale = 0.36; const centerX=0, centerY=0;
+
+      function rotateX(v,a){ const [x,y,z]=v; const c=Math.cos(a), s=Math.sin(a); return [x, c*y - s*z, s*y + c*z]; }
+      function rotateY(v,a){ const [x,y,z]=v; const c=Math.cos(a), s=Math.sin(a); return [c*x + s*z, y, -s*x + c*z]; }
+      function projectScaled([x,y,z]){ const f=900; const zc=z+dist; const sx=(x*f)/zc + hiveCanvas.width/hiveDpr/2 + centerX; const sy=(-y*f)/zc + hiveCanvas.height/hiveDpr/2 + centerY; return {x:sx,y:sy,z:zc}; }
+      function lerp(a,b,t){ return a + (b-a)*t; }
+      function clamp01(t){ return Math.max(0, Math.min(1,t)); }
+
+      let lastHiveTs = 0, blurScale = 1, hiveRunning = true;
+
+      function hiveLoop(ts){
+        const w = hiveCanvas.width/hiveDpr, h = hiveCanvas.height/hiveDpr;
+        if (!lastHiveTs) lastHiveTs = ts; const dt = ts - lastHiveTs; lastHiveTs = ts;
+        // Simple perf guard for shadows
+        if (dt > 24) blurScale = Math.max(0.5, blurScale * 0.9); else blurScale = Math.min(1, blurScale * 1.02);
+
+        hiveCtx.clearRect(0,0,w,h);
+
+        // slow spin
+        yaw += spin;
+
+        const rotated = verts.map(v=>rotateX(rotateY(v,yaw),pitch));
+        const scaled = rotated.map(([x,y,z])=>[x*scale,y*scale,z*scale]);
+        const depths = scaled.map(([, , z]) => z + dist);
+        let minZ=Infinity, maxZ=-Infinity; for (const zc of depths){ if (zc<minZ) minZ=zc; if (zc>maxZ) maxZ=zc; }
+        const invRange = 1/(maxZ-minZ || 1);
+        const tverts = scaled.map(v=>projectScaled(v));
+
+        // --- centre node & thin spokes to all vertices ---
+        const centerScaled = [0, 0, 0];
+        const centerDepth = centerScaled[2] + dist; // = dist
+        const center2D = projectScaled(centerScaled);
+
+        // draw thin spokes first so model edges remain visually dominant
+        for (let k = 0; k < tverts.length; k++) {
+          const b = tverts[k];
+          const zAvg = (centerDepth + depths[k]) * 0.5;
+          const t = clamp01((zAvg - minZ) * invRange);
+          const alpha = lerp(0.45, 0.12, t); // subtler than outer edges
+          const lw = lerp(0.45, 0.15, t);    // thinner than outer edges
+          hiveCtx.globalAlpha = alpha;
+          hiveCtx.lineWidth = lw;
+          hiveCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--edge') || '#ffffff';
+          hiveCtx.beginPath();
+          hiveCtx.moveTo(center2D.x, center2D.y);
+          hiveCtx.lineTo(b.x, b.y);
+          hiveCtx.stroke();
+        }
+
+        // centre point (larger) — no glow
+        {
+          const tC = clamp01((centerDepth - minZ) * invRange);
+          const alphaC = lerp(1.0, 0.55, tC);
+          const rC = 4.2; // slightly larger
+          const coreColor = getComputedStyle(document.documentElement).getPropertyValue('--core') || '#d6ecff';
+
+          // solid core, no shadow/glow
+          hiveCtx.globalAlpha = alphaC;
+          hiveCtx.shadowBlur = 0;
+          hiveCtx.beginPath();
+          hiveCtx.arc(center2D.x, center2D.y, rC, 0, Math.PI * 2);
+          hiveCtx.fillStyle = coreColor;
+          hiveCtx.fill();
+
+          // subtle ring only
+          hiveCtx.globalAlpha = Math.min(1, alphaC + 0.1);
+          hiveCtx.lineWidth = 0.6;
+          hiveCtx.strokeStyle = 'rgba(190,225,255,0.7)';
+          hiveCtx.beginPath();
+          hiveCtx.arc(center2D.x, center2D.y, rC + 0.25, 0, Math.PI * 2);
+          hiveCtx.stroke();
+        }
+
+        const sortedEdges = edges.slice().sort((e1,e2)=>{ const z1=(depths[e1[0]]+depths[e1[1]])*0.5; const z2=(depths[e2[0]]+depths[e2[1]])*0.5; return z2-z1; });
+
+        hiveCtx.lineCap='round'; hiveCtx.lineJoin='round';
+
+        for (const [i,j] of sortedEdges){
+          const a=tverts[i], b=tverts[j];
+          const zAvg=(depths[i]+depths[j])*0.5; const t=clamp01((zAvg-minZ)*invRange);
+          const alpha=lerp(0.9,0.18,t); const lw=lerp(0.9,0.3,t); // thin edges
+          // halo under-stroke for subtle lift
+          hiveCtx.globalAlpha = alpha * 0.18; hiveCtx.lineWidth = lw + 0.6; hiveCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--edge') || '#ffffff';
+          hiveCtx.beginPath(); hiveCtx.moveTo(a.x, a.y); hiveCtx.lineTo(b.x, b.y); hiveCtx.stroke();
+          // main stroke
+          hiveCtx.globalAlpha=alpha; hiveCtx.lineWidth=lw; hiveCtx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--edge') || '#ffffff';
+          hiveCtx.beginPath(); hiveCtx.moveTo(a.x, a.y); hiveCtx.lineTo(b.x, b.y); hiveCtx.stroke();
+        }
+
+        // vertices (slightly smaller) with soft depth fade & tiny ring
+        for (let k=0;k<tverts.length;k++){
+          const p=tverts[k]; const t=clamp01((depths[k]-minZ)*invRange); const alpha=lerp(1.0,0.35,t); const r=lerp(5.8,3.2,t);
+          hiveCtx.globalAlpha=alpha; hiveCtx.shadowColor=getComputedStyle(document.documentElement).getPropertyValue('--point') || '#ffffff'; hiveCtx.shadowBlur=lerp(10,2,t) * blurScale;
+          hiveCtx.beginPath(); hiveCtx.arc(p.x, p.y, r, 0, Math.PI*2); hiveCtx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--point') || '#ffffff'; hiveCtx.fill();
+          hiveCtx.shadowBlur=0; hiveCtx.globalAlpha=Math.min(1, alpha+0.12); hiveCtx.lineWidth=0.5; hiveCtx.strokeStyle='rgba(255,255,255,0.7)';
+          hiveCtx.beginPath(); hiveCtx.arc(p.x, p.y, r+0.25, 0, Math.PI*2); hiveCtx.stroke();
+        }
+
+        hiveCtx.globalAlpha=1; hiveCtx.shadowBlur=0;
+
+        if (hiveRunning) requestAnimationFrame(hiveLoop);
+      }
+
       // Boot
       function boot(){ 
         reflow();
+        resizeHive();
         requestAnimationFrame(starsLoop);
+        requestAnimationFrame(hiveLoop);
       }
+      
+      window.addEventListener('resize', () => {
+        resizeHive();
+      });
+      
       boot();
     })();
 
